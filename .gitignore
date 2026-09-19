@@ -14,13 +14,33 @@ crash.*.log
 *.tfvars
 *.tfvars.json
 
-# Node
-node_modules/
+# Fider generated / local files
+fider/data/
+fider/tmp/
+fider/dist/
+fider/output/
+fider/node_modules/
+fider/logs/
+fider/locale/**/*.js
 
-# Go build output
 fider/fider
+fider/fider.exe
+fider/ssr.js
+fider/npm-debug.log
+fider/profile.out
+fider/debug
+fider/debug.test
+fider/cover.out
+fider/gcloud-key.json
+fider/coverage.tmp
+fider/tsconfig.tsbuildinfo
+fider/etc/*.pem
+fider/fider_schema.sql
+fider/fider.sql
+fider/.zed/debug.json
+fider/.env
 
-# Logs
+# General logs
 *.log
 logs/
 
@@ -30,6 +50,6 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Local screenshots / temporary files
+# Temporary files
 tmp/
 temp/
