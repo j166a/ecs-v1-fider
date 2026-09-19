@@ -25,3 +25,6 @@ fider/dist
 
 # Logs
 **/*.log
+
+docker-compose.yml
+fider/docker-compose.yml
