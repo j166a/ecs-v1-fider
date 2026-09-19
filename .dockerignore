@@ -1,0 +1,27 @@
+# Git
+.git
+.github
+.gitignore
+
+# Secrets / local environment
+.env
+.env.*
+fider/.env
+
+# Project files not required during image build
+README.md
+screenshots/
+infra/
+terraform/
+
+# Fider build artefacts / local files
+fider/node_modules
+fider/tests
+fider/data
+fider/output
+fider/cover.out
+fider/scripts
+fider/dist
+
+# Logs
+**/*.log
