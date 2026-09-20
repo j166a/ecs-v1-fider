@@ -1,0 +1,40 @@
+services:
+  smtp:
+    image: mailhog/mailhog:latest
+    restart: always
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
+  db:
+    image: postgres:17
+    restart: always
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fider:local
+    restart: always
+    ports:
+      - "80:3000"
+    environment:
+      BASE_URL: ${BASE_URL}
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      EMAIL_NOREPLY: ${EMAIL_NOREPLY}
+      EMAIL_SMTP_HOST: smtp
+      EMAIL_SMTP_PORT: 1025
+    depends_on:
+      - db
+      - smtp
+
+
+volumes:
+  pg_data:
