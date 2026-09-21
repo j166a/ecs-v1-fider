@@ -197,8 +197,6 @@ func Reload() {
 		mustBeSet("EMAIL_MAILGUN_DOMAIN")
 	case "awsses":
 		mustBeSet("EMAIL_AWSSES_REGION")
-		mustBeSet("EMAIL_AWSSES_ACCESS_KEY_ID")
-		mustBeSet("EMAIL_AWSSES_SECRET_ACCESS_KEY")
 	case "smtp":
 		mustBeSet("EMAIL_SMTP_HOST")
 		mustBeSet("EMAIL_SMTP_PORT")

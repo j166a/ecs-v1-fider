@@ -42,9 +42,17 @@ func (s Service) Enabled() bool {
 func (s Service) Init() {
 	sesEnvConfig := env.Config.Email.AWSSES
 	sesConfig := &aws.Config{
-		Credentials: credentials.NewStaticCredentials(sesEnvConfig.AccessKeyID, sesEnvConfig.SecretAccessKey, ""),
-		Region:      aws.String(sesEnvConfig.Region),
+		Region: aws.String(sesEnvConfig.Region),
 	}
+
+	if sesEnvConfig.AccessKeyID != "" && sesEnvConfig.SecretAccessKey != "" {
+		sesConfig.Credentials = credentials.NewStaticCredentials(
+			sesEnvConfig.AccessKeyID,
+			sesEnvConfig.SecretAccessKey,
+			"",
+		)
+	}
+
 	awsSession, err := session.NewSession(sesConfig)
 	if err != nil {
 		panic(err)
