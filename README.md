@@ -163,12 +163,13 @@ FROM scratch
 
 Local image size reduced from approximately:
 
-```text
-Debian runtime:   826 MB
-Scratch runtime:  353 MB
-```
+| Image | Local Size | ECR Compressed Size |
+|---|---:|---:|
+| Debian slim runtime | 826 MB | 340 MB |
+| Scratch runtime | 353 MB | 148.1 MB |
+| Reduction | ~57% | ~56% |
 
-This represents an approximate 57% reduction while also removing the general-purpose OS userland from the runtime image.
+The final scratch runtime reduced the local image size from approximately 826 MB to 353 MB and the compressed ECR image size from approximately 340 MB to 148.1 MB, a reduction of about 56-57%.
 
 The scratch image was validated for:
 
