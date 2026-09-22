@@ -1,20 +1,41 @@
 services:
+  db:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   smtp:
     image: mailhog/mailhog:latest
     restart: always
     ports:
       - "8025:8025"
-      - "1025:1025"
 
-  db:
-    image: postgres:17
-    restart: always
-    volumes:
-      - pg_data:/var/lib/postgresql/data
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fider:local
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-
+      BASE_URL: ${BASE_URL}
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      EMAIL_NOREPLY: ${EMAIL_NOREPLY}
+      EMAIL_SMTP_HOST: smtp
+      EMAIL_SMTP_PORT: "1025"
+    command: ["/app/fider", "migrate"]
+    depends_on:
+      db:
+        condition: service_healthy
 
   app:
     build:
@@ -22,8 +43,6 @@ services:
       dockerfile: Dockerfile
     image: fider:local
     restart: always
-    ports:
-      - "80:3000"
     environment:
       BASE_URL: ${BASE_URL}
       DATABASE_URL: ${DATABASE_URL}
@@ -32,9 +51,12 @@ services:
       EMAIL_SMTP_HOST: smtp
       EMAIL_SMTP_PORT: 1025
     depends_on:
-      - db
-      - smtp
-
+      migrate:
+        condition: service_completed_successfully
+      smtp:
+        condition: service_started
+    ports:
+      - "80:3000"
 
 volumes:
   pg_data:
