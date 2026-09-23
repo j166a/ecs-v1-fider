@@ -3,17 +3,23 @@ resource "aws_vpc" "this" {
   enable_dns_support   = true
   enable_dns_hostnames = true
 
-  tags = {
-    Name = "${var.name}-vpc"
-  }
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.name}-vpc"
+    }
+  )
 }
 
 resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.this.id
 
-  tags = {
-    Name = "${var.name}-igw"
-  }
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.name}-igw"
+    }
+  )
 }
 
 resource "aws_subnet" "public" {
@@ -24,9 +30,12 @@ resource "aws_subnet" "public" {
   availability_zone       = var.availability_zones[count.index]
   map_public_ip_on_launch = true
 
-  tags = {
-    Name = "${var.name}-public-${count.index + 1}"
-  }
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.name}-public-${count.index + 1}"
+    }
+  )
 }
 
 resource "aws_subnet" "private" {
@@ -37,17 +46,23 @@ resource "aws_subnet" "private" {
   availability_zone       = var.availability_zones[count.index]
   map_public_ip_on_launch = true
 
-  tags = {
-    Name = "${var.name}-public-${count.index + 1}"
-  }
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.name}-private-${count.index + 1}"
+    }
+  )
 }
 
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.this.id
 
-  tags = {
-    Name = "${var.name}-public-rt"
-  }
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.name}-public-rt"
+    }
+  )
 }
 
 resource "aws_route" "public_internet" {
@@ -66,9 +81,12 @@ resource "aws_route_table_association" "public" {
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.this.id
 
-  tags = {
-    Name = "${var.name}-private-rt"
-  }
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.name}-private-rt"
+    }
+  )
 }
 
 resource "aws_route_table_association" "private" {

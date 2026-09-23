@@ -1,7 +1,19 @@
+locals {
+  name = "fider"
+
+  common_tags = {
+    Project     = "fider"
+    Environment = "production"
+    ManagedBy   = "terraform"
+  }
+}
+
 module "vpc" {
   source = "./modules/vpc"
 
-  name               = "fider"
+  name = local.name
+  tags = local.common_tags
+
   vpc_cidr           = "10.0.0.0/16"
   availability_zones = ["eu-west-2a", "eu-west-2b"]
 
