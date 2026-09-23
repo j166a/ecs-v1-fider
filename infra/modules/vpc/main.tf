@@ -72,9 +72,9 @@ resource "aws_route" "public_internet" {
 }
 
 resource "aws_route_table_association" "public" {
-  count = length(var.public_subnet_cidrs)
+  count = length(aws_subnet.public)
 
-  subnet_id      = var.public_subnet_cidrs[count.index]
+  subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public.id
 }
 
@@ -90,8 +90,8 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private" {
-  count = length(var.private_subnet_cidrs)
+  count = length(aws_subnet.private)
 
-  subnet_id      = var.private_subnet_cidrs[count.index]
+  subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private.id
 }
