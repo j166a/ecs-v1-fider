@@ -27,3 +27,13 @@ module "vpc" {
     "10.0.4.0/24",
   ]
 }
+
+module "endpoints" {
+  source = "./modules/endpoints"
+
+  name                    = local.name
+  tags                    = local.common_tags
+  vpc_id                  = module.vpc.vpc_id
+  private_subnet_ids      = module.vpc.private_subnet_ids
+  private_route_table_ids = module.vpc.private_route_table_ids
+}
