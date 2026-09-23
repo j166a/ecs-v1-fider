@@ -21,6 +21,7 @@ variable "private_route_table_ids" {
 variable "security_group_id" {
   description = "ID of security group attached to interface VPC endpoints"
   type        = string
+  default     = null
 }
 
 variable "tags" {
