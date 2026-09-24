@@ -3,13 +3,13 @@ locals {
 
   common_tags = {
     Project     = "fider"
-    Environment = "production"
+    Environment = var.environment
     ManagedBy   = "terraform"
   }
 }
 
 module "vpc" {
-  source = "./modules/vpc"
+  source = "../../modules/vpc"
 
   name = local.name
   tags = local.common_tags
@@ -29,7 +29,7 @@ module "vpc" {
 }
 
 module "endpoints" {
-  source = "./modules/endpoints"
+  source = "../../modules/endpoints"
 
   name                    = local.name
   tags                    = local.common_tags
