@@ -1,13 +1,13 @@
 resource "aws_s3_bucket" "state" {
   bucket = var.state_bucket_name
 
-  tags = {
-    Name        = var.state_bucket_name
-    Project     = "fider"
-    Environment = "production"
-    ManagedBy   = "terraform"
-    Purpose     = "terraform-state"
-  }
+  tags = merge(
+    local.common_tags,
+    {
+      Name    = var.state_bucket_name
+      Purpose = "terraform-state"
+    }
+  )
 }
 
 resource "aws_s3_bucket_versioning" "state" {
@@ -45,11 +45,11 @@ resource "aws_ecr_repository" "fider" {
     scan_on_push = true
   }
 
-  tags = {
-    Name        = "fider"
-    Project     = "fider"
-    Environment = "production"
-    ManagedBy   = "terraform"
-    Purpose     = "container-registry"
-  }
+  tags = merge(
+    local.common_tags,
+    {
+      Name    = "fider"
+      Purpose = "container-registry"
+    }
+  )
 }
