@@ -6,6 +6,7 @@ locals {
     ecr_dkr = "ecr.dkr"
     logs    = "logs"
     ssm     = "ssm"
+    ses     = "email"
   }
 }
 
