@@ -90,6 +90,15 @@ resource "aws_security_group" "rds" {
   )
 }
 
+resource "aws_vpc_security_group_ingress_rule" "rds_from_ecs" {
+  security_group_id = aws_security_group.rds.id
+
+  referenced_security_group_id = aws_security_group.ecs.id
+  from_port                    = 5432
+  ip_protocol                  = "tcp"
+  to_port                      = 5432
+}
+
 resource "aws_security_group" "endpoints" {
   name        = "${var.name}-endpoints-sg"
   description = "Security group for VPC interface endpoints"
