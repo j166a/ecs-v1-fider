@@ -26,4 +26,13 @@ module "endpoints" {
   vpc_id                  = module.vpc.vpc_id
   private_subnet_ids      = module.vpc.private_subnet_ids
   private_route_table_ids = module.vpc.private_route_table_ids
+  security_group_id       = module.security.endpoints_security_group_id
+}
+
+module "security" {
+  source = "../../modules/security"
+
+  name   = local.name
+  tags   = local.common_tags
+  vpc_id = module.vpc.vpc_id
 }
