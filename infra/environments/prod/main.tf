@@ -14,7 +14,7 @@ module "vpc" {
   name = local.name
   tags = local.common_tags
 
-  vpc_cidr           = "10.0.8.0/22"
+  vpc_cidr           = var.vpc_cidr
   availability_zones = ["eu-west-2a", "eu-west-2b"]
 }
 

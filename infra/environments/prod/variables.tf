@@ -9,3 +9,8 @@ variable "environment" {
   type        = string
   default     = "prod"
 }
+
+variable "vpc_cidr" {
+  description = "CIDR block for the environment VPC"
+  type        = string
+}

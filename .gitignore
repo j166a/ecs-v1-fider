@@ -14,6 +14,9 @@ crash.*.log
 *.tfvars
 *.tfvars.json
 
+# Commit example variable files
+!*.tfvars.example
+
 # Fider generated / local files
 fider/data/
 fider/tmp/
