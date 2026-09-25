@@ -39,7 +39,7 @@ data "aws_iam_policy_document" "ecs_task_ses" {
       "ses:SendRawEmail",
     ]
 
-    resources = ["*"]
+    resources = [var.ses_identity_arn]
   }
 }
 

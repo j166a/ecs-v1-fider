@@ -14,3 +14,8 @@ variable "vpc_cidr" {
   description = "CIDR block for the environment VPC"
   type        = string
 }
+
+variable "ses_identity_arn" {
+  description = "ARN of the verified identity used by Fider"
+  type        = string
+}

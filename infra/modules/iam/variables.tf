@@ -8,3 +8,8 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "ses_identity_arn" {
+  description = "ARN of the verified SES identity used by Fider"
+  type        = string
+}

@@ -36,3 +36,12 @@ module "security" {
   tags   = local.common_tags
   vpc_id = module.vpc.vpc_id
 }
+
+module "iam" {
+  source = "../../modules/iam"
+
+  name = local.name
+  tags = local.common_tags
+
+  ses_identity_arn = var.ses_identity_arn
+}
