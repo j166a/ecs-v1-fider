@@ -30,3 +30,27 @@ resource "aws_iam_role" "ecs_task" {
   tags = var.tags
 }
 
+data "aws_iam_policy_document" "ecs_task_ses" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ses:SendEmail",
+      "ses:SendRawEmail",
+    ]
+
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "ecs_task_ses" {
+  name   = "${var.name}-task-ses"
+  policy = data.aws_iam_policy_document.ecs_task_ses.json
+
+  tags = var.tags
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_ses" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.ecs_task_ses.arn
+}
