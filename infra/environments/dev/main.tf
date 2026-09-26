@@ -57,3 +57,12 @@ module "ssm" {
   jwt_secret  = var.jwt_secret
   tags        = local.common_tags
 }
+
+module "rds" {
+  source = "../../modules/rds"
+
+  name               = local.name
+  tags               = local.common_tags
+  private_subnet_ids = module.vpc.private_subnet_ids
+  security_group_id  = module.security.rds_security_group_id
+}
