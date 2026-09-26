@@ -54,3 +54,27 @@ resource "aws_iam_role_policy_attachment" "ecs_task_ses" {
   role       = aws_iam_role.ecs_task.name
   policy_arn = aws_iam_policy.ecs_task_ses.arn
 }
+
+data "aws_iam_policy_document" "ecs_execution_ssm" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ssm:GetParameters",
+    ]
+
+    resources = var.ssm_parameter_arns
+  }
+}
+
+resource "aws_iam_policy" "ecs_execution_ssm" {
+  name   = "${var.name}-execution-ssm"
+  policy = data.aws_iam_policy_document.ecs_execution_ssm.json
+
+  tags = var.tags
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_execution_ssm" {
+  role       = aws_iam_role.ecs_execution.name
+  policy_arn = aws_iam_policy.ecs_execution_ssm.arn
+}

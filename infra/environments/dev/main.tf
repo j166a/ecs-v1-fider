@@ -44,6 +44,10 @@ module "iam" {
   tags = local.common_tags
 
   ses_identity_arn = var.ses_identity_arn
+
+  ssm_parameter_arns = [
+    module.ssm.jwt_secret_arn,
+  ]
 }
 
 module "ssm" {
