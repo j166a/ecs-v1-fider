@@ -45,3 +45,11 @@ module "iam" {
 
   ses_identity_arn = var.ses_identity_arn
 }
+
+module "ssm" {
+  source = "../../modules/ssm"
+
+  environment = var.environment
+  jwt_secret  = var.jwt_secret
+  tags        = local.common_tags
+}
