@@ -31,6 +31,10 @@ resource "aws_db_instance" "this" {
   publicly_accessible = false
   skip_final_snapshot = true
 
+  backup_retention_period = 7
+  deletion_protection     = false
+  apply_immediately       = true
+
   tags = merge(
     var.tags,
     {
