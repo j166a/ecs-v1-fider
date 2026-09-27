@@ -2,11 +2,12 @@ data "aws_region" "current" {}
 
 locals {
   interface_endpoints = {
-    ecr_api = "ecr.api"
-    ecr_dkr = "ecr.dkr"
-    logs    = "logs"
-    ssm     = "ssm"
-    ses     = "email"
+    ecr_api        = "ecr.api"
+    ecr_dkr        = "ecr.dkr"
+    logs           = "logs"
+    ssm            = "ssm"
+    ses            = "email"
+    secretsmanager = "secretsmanager"
   }
 }
 
