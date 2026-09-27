@@ -25,3 +25,13 @@ variable "jwt_secret" {
   type        = string
   sensitive   = true
 }
+
+variable "domain_name" {
+  description = "Application domain name"
+  type        = string
+}
+
+variable "route53_zone_id" {
+  description = "Route 53 hosted zone ID"
+  type        = string
+}

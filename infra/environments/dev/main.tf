@@ -81,6 +81,15 @@ module "alb" {
 module "acm" {
   source = "../../modules/acm"
 
-  domain_name = "fider.labs.imadahmed.uk"
+  domain_name = var.domain_name
   tags        = local.common_tags
+}
+
+module "route53" {
+  source = "../../modules/route53"
+
+  zone_id      = var.route53_zone_id
+  record_name  = var.domain_name
+  alb_dns_name = module.alb.dns_name
+  alb_zone_id  = module.alb.zone_id
 }
