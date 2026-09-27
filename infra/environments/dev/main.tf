@@ -66,3 +66,13 @@ module "rds" {
   private_subnet_ids = module.vpc.private_subnet_ids
   security_group_id  = module.security.rds_security_group_id
 }
+
+module "alb" {
+  source = "../../modules/alb"
+
+  name              = local.name
+  public_subnet_ids = module.vpc.public_subnet_ids
+  security_group_id = module.security.alb_security_group_id
+  vpc_id            = module.vpc.vpc_id
+  tags              = local.common_tags
+}
