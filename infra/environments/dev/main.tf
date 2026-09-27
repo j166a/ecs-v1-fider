@@ -93,3 +93,10 @@ module "route53" {
   alb_dns_name = module.alb.dns_name
   alb_zone_id  = module.alb.zone_id
 }
+
+module "ecs" {
+  source = "../../modules/ecs"
+
+  name = local.name
+  tags = local.common_tags
+}
