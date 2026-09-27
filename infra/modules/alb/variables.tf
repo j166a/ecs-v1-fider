@@ -13,6 +13,17 @@ variable "security_group_id" {
   type        = string
 }
 
+variable "vpc_id" {
+  description = "VPC ID for the ALB target group"
+  type        = string
+}
+
+variable "target_port" {
+  description = "Port used by the Fider application"
+  type        = number
+  default     = 3000
+}
+
 variable "tags" {
   description = "Tags applied to ALB resources"
   type        = map(string)
