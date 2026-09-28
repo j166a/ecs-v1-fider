@@ -14,6 +14,10 @@ COPY fider/go.mod fider/go.sum ./
 RUN  go mod download
 
 COPY fider/ ./
+COPY docker/entrypoint ./docker/entrypoint
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -o /app/entrypoint ./docker/entrypoint
 
 RUN CGO_ENABLED=1 make build-server \
     LDFLAGS='-linkmode external -extldflags "-static"'
@@ -42,6 +46,7 @@ WORKDIR /app
 COPY --from=server-builder /etc/ssl/certs/ca-certificates.crt \
     /etc/ssl/certs/ca-certificates.crt
 
+COPY --from=server-builder /app/entrypoint /app/entrypoint
 COPY --from=server-builder /app/migrations /app/migrations
 COPY --from=server-builder /app/views /app/views
 COPY --from=server-builder /app/locale /app/locale
@@ -60,4 +65,5 @@ EXPOSE 3000
 
 HEALTHCHECK --timeout=5s CMD ["/app/fider", "ping"]
 
-CMD ["/app/fider"]
+ENTRYPOINT ["/app/entrypoint"]
+CMD []

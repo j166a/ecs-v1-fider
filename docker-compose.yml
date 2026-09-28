@@ -27,12 +27,16 @@ services:
     image: fider:local
     environment:
       BASE_URL: ${BASE_URL}
-      DATABASE_URL: ${DATABASE_URL}
+      DB_HOST: db
+      DB_NAME: ${POSTGRES_DB}
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_SSLMODE: disable
       JWT_SECRET: ${JWT_SECRET}
       EMAIL_NOREPLY: ${EMAIL_NOREPLY}
       EMAIL_SMTP_HOST: smtp
       EMAIL_SMTP_PORT: "1025"
-    command: ["/app/fider", "migrate"]
+    command: ["migrate"]
     depends_on:
       db:
         condition: service_healthy
@@ -45,7 +49,11 @@ services:
     restart: always
     environment:
       BASE_URL: ${BASE_URL}
-      DATABASE_URL: ${DATABASE_URL}
+      DB_HOST: db
+      DB_NAME: ${POSTGRES_DB}
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_SSLMODE: disable
       JWT_SECRET: ${JWT_SECRET}
       EMAIL_NOREPLY: ${EMAIL_NOREPLY}
       EMAIL_SMTP_HOST: smtp
