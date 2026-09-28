@@ -107,6 +107,7 @@ module "ecs" {
   region             = var.aws_region
   execution_role_arn = module.iam.ecs_execution_role_arn
   task_role_arn      = module.iam.ecs_task_role_arn
+  jwt_secret_arn     = module.ssm.jwt_secret_arn
   base_url           = var.base_url
   email_noreply      = var.email_noreply
 

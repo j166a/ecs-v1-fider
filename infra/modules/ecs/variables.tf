@@ -58,6 +58,9 @@ variable "target_group_arn" {
   type        = string
 }
 
+variable "jwt_secret_arn" {
+  description = "ARN of the SSM parameter containing the JWT secret"
+}
 
 variable "base_url" {
   description = "Public base URL for Fider"
