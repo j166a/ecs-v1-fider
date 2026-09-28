@@ -13,6 +13,11 @@ output "db_name" {
   value       = aws_db_instance.this.db_name
 }
 
+output "username" {
+  description = "Master PostgreSQL username"
+  value       = aws_db_instance.this.username
+}
+
 output "master_user_secret_arn" {
   description = "ARN of the RDS managed master user secret"
   value       = aws_db_instance.this.master_user_secret[0].secret_arn
