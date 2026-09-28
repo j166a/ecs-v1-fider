@@ -103,11 +103,14 @@ data "aws_ecr_repository" "fider" {
 module "ecs" {
   source = "../../modules/ecs"
 
-  execution_role_arn = module.iam.ecs_execution_role_arn
-  task_role_arn      = module.iam.ecs_task_role_arn
-  name               = local.name
-  region             = var.aws_region
-  image_uri          = "${data.aws_ecr_repository.fider.repository_url}:${var.image_tag}"
+  execution_role_arn    = module.iam.ecs_execution_role_arn
+  task_role_arn         = module.iam.ecs_task_role_arn
+  name                  = local.name
+  region                = var.aws_region
+  image_uri             = "${data.aws_ecr_repository.fider.repository_url}:${var.image_tag}"
+  private_subnet_ids    = module.vpc.private_subnet_ids
+  ecs_security_group_id = module.security.ecs_security_group_id
+  target_group_arn      = module.alb.target_group_arn
 
   db_host       = module.rds.endpoint
   db_name       = module.rds.db_name

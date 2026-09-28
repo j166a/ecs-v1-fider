@@ -43,6 +43,20 @@ variable "db_secret_arn" {
   type        = string
 }
 
+variable "private_subnet_ids" {
+  description = "Private subnet IDs for ECS tasks"
+  type        = list(string)
+}
+
+variable "ecs_security_group_id" {
+  description = "Security group ID for ECS tasks"
+  type        = string
+}
+
+variable "target_group_arn" {
+  description = "ARN of the ALB target group"
+  type        = string
+}
 
 variable "tags" {
   description = "Tags to apply to ECS resources"
