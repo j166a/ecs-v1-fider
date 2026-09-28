@@ -1,6 +1,11 @@
 resource "aws_ecs_cluster" "this" {
   name = "${var.name}-cluster"
 
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
+
   tags = merge(
     var.tags,
     {
@@ -12,6 +17,56 @@ resource "aws_ecs_cluster" "this" {
 resource "aws_cloudwatch_log_group" "this" {
   name              = "/ecs/${var.name}"
   retention_in_days = 7
+
+  tags = var.tags
+}
+
+resource "aws_ecs_task_definition" "this" {
+  family = "${var.name}-task-definition"
+
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = "256"
+  memory                   = "512"
+  execution_role_arn       = var.execution_role_arn
+  task_role_arn            = var.task_role_arn
+
+  runtime_platform {
+    operating_system_family = "LINUX"
+    cpu_architecture        = "X86_64"
+  }
+
+  container_definitions = jsonencode([
+    {
+      name      = var.name
+      image     = var.image_uri
+      essential = true
+
+      portMappings = [{
+        containerPort = 3000
+        protocol      = "tcp"
+      }]
+
+      environment = [
+        { name = "DB_HOST", value = var.db_host },
+        { name = "DB_NAME", value = var.db_name },
+        { name = "DB_USERNAME", value = var.db_username }
+      ]
+
+      secrets = [
+        { name = "DB_PASSWORD", valueFrom = "${var.db_secret_arn}:password::" }
+      ]
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.this.name
+          awslogs-region        = var.region
+          awslogs-stream-prefix = var.name
+        }
+      }
+    }
+  ])
 
   tags = var.tags
 }

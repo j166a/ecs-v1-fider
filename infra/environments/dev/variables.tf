@@ -35,3 +35,8 @@ variable "route53_zone_id" {
   description = "Route 53 hosted zone ID"
   type        = string
 }
+
+variable "image_tag" {
+  description = "Tag of the Fider image to deploy"
+  type        = string
+}

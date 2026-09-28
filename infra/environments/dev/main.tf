@@ -96,9 +96,23 @@ module "route53" {
   alb_zone_id  = module.alb.zone_id
 }
 
+data "aws_ecr_repository" "fider" {
+  name = "fider"
+}
+
 module "ecs" {
   source = "../../modules/ecs"
 
-  name = local.name
+  execution_role_arn = module.iam.ecs_execution_role_arn
+  task_role_arn      = module.iam.ecs_task_role_arn
+  name               = local.name
+  region             = var.aws_region
+  image_uri          = "${data.aws_ecr_repository.fider.repository_url}:${var.image_tag}"
+
+  db_host       = module.rds.endpoint
+  db_name       = module.rds.db_name
+  db_username   = module.rds.username
+  db_secret_arn = module.rds.master_user_secret_arn
+
   tags = local.common_tags
 }

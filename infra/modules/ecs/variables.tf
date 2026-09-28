@@ -3,6 +3,47 @@ variable "name" {
   type        = string
 }
 
+variable "execution_role_arn" {
+  description = "ARN of the ECS task execution role used by the task definition"
+  type        = string
+}
+
+variable "task_role_arn" {
+  description = "ARN of the ECS task role used by the task definition"
+  type        = string
+}
+
+variable "region" {
+  description = "AWS region"
+  type        = string
+}
+
+variable "image_uri" {
+  description = "URI of the app image from ECR"
+  type        = string
+}
+
+variable "db_host" {
+  description = "RDS PostgreSQL database endpoint"
+  type        = string
+}
+
+variable "db_name" {
+  description = "RDS PostgreSQL database name"
+  type        = string
+}
+
+variable "db_username" {
+  description = "RDS PostgreSQL database username"
+  type        = string
+}
+
+variable "db_secret_arn" {
+  description = "ARN of the RDS managed master user secret"
+  type        = string
+}
+
+
 variable "tags" {
   description = "Tags to apply to ECS resources"
   type        = map(string)
