@@ -65,6 +65,14 @@ resource "aws_ecs_task_definition" "this" {
           awslogs-stream-prefix = var.name
         }
       }
+
+      healthCheck = {
+        command     = ["CMD", "/app/fider", "ping"]
+        interval    = 30
+        timeout     = 5
+        retries     = 3
+        startPeriod = 60
+      }
     }
   ])
 
