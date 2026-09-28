@@ -48,6 +48,8 @@ module "iam" {
   ssm_parameter_arns = [
     module.ssm.jwt_secret_arn,
   ]
+
+  rds_secret_arn = module.rds.master_user_secret_arn
 }
 
 module "ssm" {

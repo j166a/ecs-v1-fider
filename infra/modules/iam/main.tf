@@ -78,3 +78,29 @@ resource "aws_iam_role_policy_attachment" "ecs_execution_ssm" {
   role       = aws_iam_role.ecs_execution.name
   policy_arn = aws_iam_policy.ecs_execution_ssm.arn
 }
+
+data "aws_iam_policy_document" "ecs_execution_secrets" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "secretsmanager:GetSecretValue"
+    ]
+
+    resources = [
+      var.rds_secret_arn
+    ]
+  }
+}
+
+resource "aws_iam_policy" "ecs_execution_secrets" {
+  name   = "${var.name}-execution-secrets"
+  policy = data.aws_iam_policy_document.ecs_execution_secrets.json
+
+  tags = var.tags
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_execution_secrets" {
+  role       = aws_iam_role.ecs_execution.name
+  policy_arn = aws_iam_policy.ecs_execution_secrets.arn
+}
