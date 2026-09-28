@@ -58,6 +58,18 @@ variable "target_group_arn" {
   type        = string
 }
 
+
+variable "base_url" {
+  description = "Public base URL for Fider"
+  type        = string
+}
+
+variable "email_noreply" {
+  description = "No-reply email address used by Fider"
+  type        = string
+}
+
+
 variable "tags" {
   description = "Tags to apply to ECS resources"
   type        = map(string)

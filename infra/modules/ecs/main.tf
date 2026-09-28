@@ -50,7 +50,9 @@ resource "aws_ecs_task_definition" "this" {
       environment = [
         { name = "DB_HOST", value = var.db_host },
         { name = "DB_NAME", value = var.db_name },
-        { name = "DB_USERNAME", value = var.db_username }
+        { name = "DB_USERNAME", value = var.db_username },
+        { name = "BASE_URL", value = var.base_url },
+        { name = "EMAIL_NOREPLY", value = var.email_noreply }
       ]
 
       secrets = [

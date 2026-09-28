@@ -40,3 +40,13 @@ variable "image_tag" {
   description = "Tag of the Fider image to deploy"
   type        = string
 }
+
+variable "base_url" {
+  description = "Public base URL for Fider"
+  type        = string
+}
+
+variable "email_noreply" {
+  description = "No-reply email address used by Fider"
+  type        = string
+}
