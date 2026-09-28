@@ -98,5 +98,10 @@ resource "aws_ecs_service" "this" {
     container_port   = 3000
   }
 
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
+
   tags = var.tags
 }
