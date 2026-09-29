@@ -77,6 +77,21 @@ resource "aws_vpc_security_group_egress_rule" "ecs_to_endpoints" {
   to_port                      = 443
 }
 
+data "aws_region" "current" {}
+
+data "aws_prefix_list" "s3" {
+  name = "com.amazonaws.${data.aws_region.current.region}.s3"
+}
+
+resource "aws_vpc_security_group_egress_rule" "ecs_to_s3" {
+  security_group_id = aws_security_group.ecs.id
+
+  prefix_list_id = data.aws_prefix_list.s3.id
+  from_port      = 443
+  ip_protocol    = "tcp"
+  to_port        = 443
+}
+
 resource "aws_security_group" "rds" {
   name        = "${var.name}-rds-sg"
   description = "Security group for RDS"
