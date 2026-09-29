@@ -72,6 +72,11 @@ variable "email_noreply" {
   type        = string
 }
 
+variable "email_type" {
+  description = "Email type used by Fider"
+  type        = string
+  default     = "awsses"
+}
 
 variable "tags" {
   description = "Tags to apply to ECS resources"
