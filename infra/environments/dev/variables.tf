@@ -50,3 +50,9 @@ variable "email_noreply" {
   description = "No-reply email address used by Fider"
   type        = string
 }
+
+variable "ecs_desired_count" {
+  description = "Desired number of ECS service tasks"
+  type        = number
+  default     = 1
+}

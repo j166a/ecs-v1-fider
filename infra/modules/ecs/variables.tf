@@ -78,6 +78,12 @@ variable "email_type" {
   default     = "awsses"
 }
 
+variable "desired_count" {
+  description = "Desired number of ECS service tasks"
+  type        = number
+  default     = 1
+}
+
 variable "tags" {
   description = "Tags to apply to ECS resources"
   type        = map(string)

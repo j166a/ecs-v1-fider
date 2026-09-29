@@ -110,6 +110,7 @@ module "ecs" {
   jwt_secret_arn     = module.ssm.jwt_secret_arn
   base_url           = var.base_url
   email_noreply      = var.email_noreply
+  desired_count      = var.ecs_desired_count
 
   image_uri = "${data.aws_ecr_repository.fider.repository_url}:${var.image_tag}"
 
