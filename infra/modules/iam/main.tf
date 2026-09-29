@@ -41,6 +41,12 @@ data "aws_iam_policy_document" "ecs_task_ses" {
 
     resources = [var.ses_identity_arn]
   }
+
+  statement {
+    actions   = ["ses:ListSuppressedDestinations"]
+    resources = ["*"]
+  }
+
 }
 
 resource "aws_iam_policy" "ecs_task_ses" {
