@@ -27,3 +27,8 @@ output "ecs_task_definition_family" {
   description = "Family of the ECS task definition"
   value       = module.ecs.task_definition_family
 }
+
+output "base_url" {
+  description = "Base URL for the Fider application"
+  value       = var.base_url
+}
