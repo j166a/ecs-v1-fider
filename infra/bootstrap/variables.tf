@@ -9,6 +9,11 @@ variable "state_bucket_name" {
   type        = string
 }
 
+variable "ecr_repository_name" {
+  description = "Name of the ECR repository"
+  type        = string
+}
+
 variable "github_owner" {
   description = "GitHub repository owner"
   type        = string

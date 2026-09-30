@@ -46,3 +46,38 @@ resource "aws_iam_role" "github_actions" {
   name               = "fider-github-actions"
   assume_role_policy = data.aws_iam_policy_document.github_actions_assume_role.json
 }
+
+data "aws_iam_policy_document" "github_actions_ecr" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ecr:GetAuthorizationToken"
+    ]
+
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:BatchGetImage",
+      "ecr:CompleteLayerUpload",
+      "ecr:InitiateLayerUpload",
+      "ecr:PutImage",
+      "ecr:UploadLayerPart",
+    ]
+
+    resources = [
+      aws_ecr_repository.fider.arn,
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "github_actions_ecr" {
+  name   = "fider-github-actions-ecr"
+  role   = aws_iam_role.github_actions.id
+  policy = data.aws_iam_policy_document.github_actions_ecr.json
+}

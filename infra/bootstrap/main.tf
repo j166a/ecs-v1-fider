@@ -38,7 +38,7 @@ resource "aws_s3_bucket_public_access_block" "state" {
 }
 
 resource "aws_ecr_repository" "fider" {
-  name                 = "fider"
+  name                 = var.ecr_repository_name
   image_tag_mutability = "IMMUTABLE"
 
   image_scanning_configuration {
