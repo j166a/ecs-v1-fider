@@ -1,0 +1,6 @@
+state_bucket_name = "your-terraform-state-bucket"
+
+github_owner         = "your-github-username-or-org"
+github_owner_id      = 123456789
+github_repository    = "your-repository-name"
+github_repository_id = 1234567890
