@@ -1,4 +1,5 @@
 state_bucket_name = "your-terraform-state-bucket"
+ecr_repository_name = "your-ecr-repository-name"
 
 github_owner         = "your-github-username-or-org"
 github_owner_id      = 123456789
