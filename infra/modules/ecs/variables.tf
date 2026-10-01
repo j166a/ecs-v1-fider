@@ -60,6 +60,7 @@ variable "target_group_arn" {
 
 variable "jwt_secret_arn" {
   description = "ARN of the SSM parameter containing the JWT secret"
+  type        = string
 }
 
 variable "base_url" {
