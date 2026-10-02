@@ -161,3 +161,44 @@ resource "aws_iam_role_policy" "github_actions_terraform_plan" {
   role   = aws_iam_role.github_actions.id
   policy = data.aws_iam_policy_document.github_actions_terraform_plan.json
 }
+
+data "aws_iam_policy_document" "github_actions_deploy_assume_role" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "sts:AssumeRoleWithWebIdentity",
+    ]
+
+    principals {
+      type = "Federated"
+
+      identifiers = [
+        aws_iam_openid_connect_provider.github.arn,
+      ]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "token.actions.githubusercontent.com:aud"
+
+      values = [
+        "sts.amazonaws.com",
+      ]
+    }
+
+    condition {
+      test     = "StringLike"
+      variable = "token.actions.githubusercontent.com:sub"
+
+      values = [
+        "repo:${var.github_owner}@${var.github_owner_id}/${var.github_repository}@${var.github_repository_id}:environment:dev",
+      ]
+    }
+  }
+}
+
+resource "aws_iam_role" "github_actions_deploy" {
+  name               = "fider-github-actions-deploy"
+  assume_role_policy = data.aws_iam_policy_document.github_actions_deploy_assume_role.json
+}
