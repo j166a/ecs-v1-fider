@@ -81,3 +81,59 @@ resource "aws_iam_role_policy" "github_actions_ecr" {
   role   = aws_iam_role.github_actions.id
   policy = data.aws_iam_policy_document.github_actions_ecr.json
 }
+
+data "aws_iam_policy_document" "github_actions_terraform_plan" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:ListBucket",
+    ]
+
+    resources = [
+      aws_s3_bucket.state.arn,
+    ]
+
+    condition {
+      test     = "StringLike"
+      variable = "s3:prefix"
+
+      values = [
+        "fider/dev/*",
+      ]
+    }
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject"
+    ]
+
+    resources = [
+      "${aws_s3_bucket.state.arn}/fider/dev/terraform.tfstate",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject",
+    ]
+
+    resources = [
+      "${aws_s3_bucket.state.arn}/fider/dev/terraform.tfstate.tflock",
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "github_actions_terraform_plan" {
+  name   = "fider-github-actions-terraform-plan"
+  role   = aws_iam_role.github_actions.id
+  policy = data.aws_iam_policy_document.github_actions_terraform_plan.json
+}
