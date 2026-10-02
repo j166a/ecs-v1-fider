@@ -137,6 +137,7 @@ data "aws_iam_policy_document" "github_actions_terraform_plan" {
     actions = [
       "ecr:DescribeRepositories",
       "ecr:DescribeImages",
+      "ecr:ListTagsForResource",
     ]
 
     resources = [
