@@ -130,6 +130,28 @@ data "aws_iam_policy_document" "github_actions_terraform_plan" {
       "${aws_s3_bucket.state.arn}/fider/dev/terraform.tfstate.tflock",
     ]
   }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ecr:DescribeRepositories",
+    ]
+
+    resources = [
+      aws_ecr_repository.fider.arn,
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ec2:DescribePrefixLists",
+    ]
+
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "github_actions_terraform_plan" {
