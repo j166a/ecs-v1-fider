@@ -202,3 +202,9 @@ resource "aws_iam_role" "github_actions_deploy" {
   name               = "fider-github-actions-deploy"
   assume_role_policy = data.aws_iam_policy_document.github_actions_deploy_assume_role.json
 }
+
+resource "aws_iam_role_policy" "github_actions_deploy_backend" {
+  name   = "fider-github-actions-deploy-backend"
+  role   = aws_iam_role.github_actions_deploy.id
+  policy = data.aws_iam_policy_document.github_actions_terraform_plan.json
+}
