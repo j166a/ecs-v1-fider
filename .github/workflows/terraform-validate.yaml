@@ -59,6 +59,9 @@ jobs:
       contents: read
       id-token: write
 
+    env:
+      TF_VAR_base_url: ${{ vars.TF_VAR_base_url }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -80,4 +83,4 @@ jobs:
 
       - name: Terraform plan
         working-directory: infra/environments/dev
-        run: terraform plan -no-color
+        run: terraform plan -no-color -input=false
