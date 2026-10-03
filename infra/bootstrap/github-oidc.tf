@@ -246,6 +246,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
       "ecs:CreateCluster",
       "ecs:TagResource",
       "ecs:DescribeClusters",
+      "ecs:DeleteCluster",
     ]
 
     resources = [
@@ -274,6 +275,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
       "iam:GetRole",
       "iam:ListRolePolicies",
       "iam:ListAttachedRolePolicies",
+      "iam:ListInstanceProfilesForRole",
     ]
 
     resources = [
@@ -289,6 +291,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
       "iam:TagPolicy",
       "iam:GetPolicy",
       "iam:GetPolicyVersion",
+      "iam:ListPolicyVersions",
     ]
 
     resources = [
@@ -304,6 +307,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
       "ssm:AddTagsToResource",
       "ssm:GetParameter",
       "ssm:ListTagsForResource",
+      "ssm:DeleteParameter",
     ]
 
     resources = [
@@ -327,6 +331,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     actions = [
       "ec2:CreateVpc",
       "ec2:CreateTags",
+      "ec2:DeleteVpc",
     ]
 
     resources = ["*"]
