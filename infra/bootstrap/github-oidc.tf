@@ -231,6 +231,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     actions = [
       "acm:AddTagsToCertificate",
       "acm:DescribeCertificate",
+      "acm:ListTagsForCertificate",
     ]
 
     resources = [
@@ -271,6 +272,8 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
       "iam:CreateRole",
       "iam:TagRole",
       "iam:GetRole",
+      "iam:ListRolePolicies",
+      "iam:ListAttachedRolePolicies",
     ]
 
     resources = [
@@ -285,6 +288,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
       "iam:CreatePolicy",
       "iam:TagPolicy",
       "iam:GetPolicy",
+      "iam:GetPolicyVersion",
     ]
 
     resources = [
@@ -299,11 +303,22 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
       "ssm:PutParameter",
       "ssm:AddTagsToResource",
       "ssm:GetParameter",
+      "ssm:ListTagsForResource"
     ]
 
     resources = [
       "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/fider/dev/jwt-secret",
     ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ssm:DescribeParameters",
+    ]
+
+    resources = ["*"]
   }
 
   statement {
@@ -322,6 +337,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
 
     actions = [
       "ec2:DescribeVpcs",
+      "ec2:DescribeVpcAttribute",
     ]
 
     resources = ["*"]
