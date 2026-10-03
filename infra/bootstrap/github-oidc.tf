@@ -220,7 +220,6 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
 
     actions = [
       "acm:RequestCertificate",
-      "acm:AddTagsToCertificate",
     ]
 
     resources = ["*"]
@@ -230,8 +229,22 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     effect = "Allow"
 
     actions = [
+      "acm:AddTagsToCertificate",
+      "acm:DescribeCertificate",
+    ]
+
+    resources = [
+      "arn:aws:acm:eu-west-2:${data.aws_caller_identity.current.account_id}:certificate/*",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
       "ecs:CreateCluster",
       "ecs:TagResource",
+      "ecs:DescribeClusters",
     ]
 
     resources = [
@@ -257,6 +270,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     actions = [
       "iam:CreateRole",
       "iam:TagRole",
+      "iam:GetRole",
     ]
 
     resources = [
@@ -270,6 +284,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     actions = [
       "iam:CreatePolicy",
       "iam:TagPolicy",
+      "iam:GetPolicy",
     ]
 
     resources = [
@@ -283,6 +298,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     actions = [
       "ssm:PutParameter",
       "ssm:AddTagsToResource",
+      "ssm:GetParameter",
     ]
 
     resources = [
@@ -298,9 +314,17 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
       "ec2:CreateTags",
     ]
 
-    resources = [
-      "*",
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ec2:DescribeVpcs",
     ]
+
+    resources = ["*"]
   }
 }
 
