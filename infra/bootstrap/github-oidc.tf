@@ -303,7 +303,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
       "ssm:PutParameter",
       "ssm:AddTagsToResource",
       "ssm:GetParameter",
-      "ssm:ListTagsForResource"
+      "ssm:ListTagsForResource",
     ]
 
     resources = [
