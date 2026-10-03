@@ -220,6 +220,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
 
     actions = [
       "acm:RequestCertificate",
+      "acm:AddTagsToCertificate",
     ]
 
     resources = ["*"]
@@ -230,6 +231,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
 
     actions = [
       "ecs:CreateCluster",
+      "ecs:TagResource",
     ]
 
     resources = [
@@ -254,6 +256,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
 
     actions = [
       "iam:CreateRole",
+      "iam:TagRole",
     ]
 
     resources = [
@@ -266,6 +269,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
 
     actions = [
       "iam:CreatePolicy",
+      "iam:TagPolicy",
     ]
 
     resources = [
@@ -278,6 +282,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
 
     actions = [
       "ssm:PutParameter",
+      "ssm:AddTagsToResource",
     ]
 
     resources = [
@@ -290,6 +295,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
 
     actions = [
       "ec2:CreateVpc",
+      "ec2:CreateTags",
     ]
 
     resources = [
