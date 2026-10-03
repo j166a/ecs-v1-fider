@@ -208,3 +208,98 @@ resource "aws_iam_role_policy" "github_actions_deploy_backend" {
   role   = aws_iam_role.github_actions_deploy.id
   policy = data.aws_iam_policy_document.github_actions_terraform_plan.json
 }
+
+data "aws_caller_identity" "current" {}
+locals {
+  dev_name = "fider-dev"
+}
+
+data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "acm:RequestCertificate",
+    ]
+
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ecs:CreateCluster",
+    ]
+
+    resources = [
+      "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:cluster/${local.dev_name}-cluster",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:CreateLogGroup",
+    ]
+
+    resources = [
+      "arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/ecs/fider-dev",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "iam:CreateRole",
+    ]
+
+    resources = [
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/fider-dev-*",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "iam:CreatePolicy",
+    ]
+
+    resources = [
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/fider-dev-*",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ssm:PutParameter",
+    ]
+
+    resources = [
+      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/fider/dev/jwt-secret",
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ec2:CreateVpc",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "github_actions_deploy_infrastructure" {
+  name   = "fider-github-actions-deploy-infrastructure"
+  role   = aws_iam_role.github_actions_deploy.id
+  policy = data.aws_iam_policy_document.github_actions_deploy_infrastructure.json
+}
