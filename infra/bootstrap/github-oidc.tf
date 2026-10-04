@@ -145,11 +145,162 @@ data "aws_iam_policy_document" "github_actions_terraform_plan" {
     ]
   }
 
+  # ACM
+
   statement {
     effect = "Allow"
 
     actions = [
+      "acm:DescribeCertificate",
+      "acm:ListTagsForCertificate",
+    ]
+
+    resources = [
+      "arn:aws:acm:eu-west-2:${data.aws_caller_identity.current.account_id}:certificate/*",
+    ]
+  }
+
+  # CloudWatch Logs
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:DescribeLogGroups",
+      "logs:ListTagsForResource",
+    ]
+
+    resources = ["*"]
+  }
+
+  # EC2 / VPC
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ec2:DescribeAvailabilityZones",
+      "ec2:DescribeInternetGateways",
+      "ec2:DescribeManagedPrefixLists",
+      "ec2:DescribeNetworkInterfaces",
       "ec2:DescribePrefixLists",
+      "ec2:DescribeRouteTables",
+      "ec2:DescribeSecurityGroupRules",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeTags",
+      "ec2:DescribeVpcAttribute",
+      "ec2:DescribeVpcEndpoints",
+      "ec2:DescribeVpcs",
+    ]
+
+    resources = ["*"]
+  }
+
+  # ELBv2
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "elasticloadbalancing:DescribeListenerAttributes",
+      "elasticloadbalancing:DescribeListeners",
+      "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "elasticloadbalancing:DescribeLoadBalancers",
+      "elasticloadbalancing:DescribeSSLPolicies",
+      "elasticloadbalancing:DescribeTags",
+      "elasticloadbalancing:DescribeTargetGroupAttributes",
+      "elasticloadbalancing:DescribeTargetGroups",
+      "elasticloadbalancing:DescribeTargetHealth",
+    ]
+
+    resources = ["*"]
+  }
+
+  # ECS
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ecs:DescribeClusters",
+      "ecs:DescribeServices",
+      "ecs:DescribeTaskDefinition",
+      "ecs:ListTagsForResource",
+    ]
+
+    resources = ["*"]
+  }
+
+  # IAM - Roles
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "iam:GetRole",
+      "iam:ListAttachedRolePolicies",
+      "iam:ListInstanceProfilesForRole",
+      "iam:ListRolePolicies",
+    ]
+
+    resources = [
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/fider-dev-*",
+    ]
+  }
+
+  # IAM - Managed Policies
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "iam:GetPolicy",
+      "iam:GetPolicyVersion",
+      "iam:ListPolicyVersions",
+    ]
+
+    resources = [
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/fider-dev-*",
+    ]
+  }
+
+  # RDS
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "rds:DescribeDBInstances",
+      "rds:DescribeDBSubnetGroups",
+      "rds:ListTagsForResource",
+    ]
+
+    resources = ["*"]
+  }
+
+  # Route 53
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "route53:GetHostedZone",
+      "route53:ListResourceRecordSets",
+    ]
+
+    resources = ["*"]
+  }
+
+  # SSM
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ssm:DescribeParameters",
+      "ssm:GetParameter",
+      "ssm:ListTagsForResource",
     ]
 
     resources = ["*"]
@@ -210,11 +361,10 @@ resource "aws_iam_role_policy" "github_actions_deploy_backend" {
 }
 
 data "aws_caller_identity" "current" {}
-locals {
-  dev_name = "fider-dev"
-}
 
 data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
+  # ACM
+
   statement {
     effect = "Allow"
 
@@ -230,8 +380,10 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
 
     actions = [
       "acm:AddTagsToCertificate",
+      "acm:DeleteCertificate",
       "acm:DescribeCertificate",
       "acm:ListTagsForCertificate",
+      "acm:RemoveTagsFromCertificate",
     ]
 
     resources = [
@@ -239,18 +391,19 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     ]
   }
 
+  # CloudWatch Logs
+
   statement {
     effect = "Allow"
 
     actions = [
-      "ecs:CreateCluster",
-      "ecs:TagResource",
-      "ecs:DescribeClusters",
-      "ecs:DeleteCluster",
+      "logs:CreateLogGroup",
+      "logs:DeleteLogGroup",
+      "logs:PutRetentionPolicy",
     ]
 
     resources = [
-      "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:cluster/${local.dev_name}-cluster",
+      "arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/ecs/fider-dev:*",
     ]
   }
 
@@ -258,7 +411,9 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     effect = "Allow"
 
     actions = [
-      "logs:CreateLogGroup",
+      "logs:ListTagsForResource",
+      "logs:TagResource",
+      "logs:UntagResource",
     ]
 
     resources = [
@@ -270,13 +425,164 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     effect = "Allow"
 
     actions = [
+      "logs:DescribeLogGroups",
+    ]
+
+    resources = ["*"]
+  }
+
+  # EC2 / VPC
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ec2:AssociateRouteTable",
+      "ec2:AttachInternetGateway",
+      "ec2:AuthorizeSecurityGroupEgress",
+      "ec2:AuthorizeSecurityGroupIngress",
+      "ec2:CreateInternetGateway",
+      "ec2:CreateRoute",
+      "ec2:CreateRouteTable",
+      "ec2:CreateSecurityGroup",
+      "ec2:CreateSubnet",
+      "ec2:CreateTags",
+      "ec2:CreateVpc",
+      "ec2:CreateVpcEndpoint",
+      "ec2:DeleteInternetGateway",
+      "ec2:DeleteRoute",
+      "ec2:DeleteRouteTable",
+      "ec2:DeleteSecurityGroup",
+      "ec2:DeleteSubnet",
+      "ec2:DeleteTags",
+      "ec2:DeleteVpc",
+      "ec2:DeleteVpcEndpoints",
+      "ec2:DescribeAvailabilityZones",
+      "ec2:DescribeInternetGateways",
+      "ec2:DescribeManagedPrefixLists",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DescribePrefixLists",
+      "ec2:DescribeRouteTables",
+      "ec2:DescribeSecurityGroupRules",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeTags",
+      "ec2:DescribeVpcAttribute",
+      "ec2:DescribeVpcEndpoints",
+      "ec2:DescribeVpcs",
+      "ec2:DetachInternetGateway",
+      "ec2:DisassociateRouteTable",
+      "ec2:ModifySubnetAttribute",
+      "ec2:ModifyVpcAttribute",
+      "ec2:ModifyVpcEndpoint",
+      "ec2:ReplaceRoute",
+      "ec2:RevokeSecurityGroupEgress",
+      "ec2:RevokeSecurityGroupIngress",
+    ]
+
+    resources = ["*"]
+  }
+
+  # ELBv2
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "elasticloadbalancing:AddTags",
+      "elasticloadbalancing:CreateListener",
+      "elasticloadbalancing:CreateLoadBalancer",
+      "elasticloadbalancing:CreateTargetGroup",
+      "elasticloadbalancing:DeleteListener",
+      "elasticloadbalancing:DeleteLoadBalancer",
+      "elasticloadbalancing:DeleteTargetGroup",
+      "elasticloadbalancing:DescribeListenerAttributes",
+      "elasticloadbalancing:DescribeListeners",
+      "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "elasticloadbalancing:DescribeLoadBalancers",
+      "elasticloadbalancing:DescribeSSLPolicies",
+      "elasticloadbalancing:DescribeTags",
+      "elasticloadbalancing:DescribeTargetGroupAttributes",
+      "elasticloadbalancing:DescribeTargetGroups",
+      "elasticloadbalancing:DescribeTargetHealth",
+      "elasticloadbalancing:ModifyListener",
+      "elasticloadbalancing:ModifyLoadBalancerAttributes",
+      "elasticloadbalancing:ModifyTargetGroup",
+      "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "elasticloadbalancing:RemoveTags",
+      "elasticloadbalancing:SetIpAddressType",
+      "elasticloadbalancing:SetSecurityGroups",
+      "elasticloadbalancing:SetSubnets",
+    ]
+
+    resources = ["*"]
+  }
+
+  # ECS
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ecs:CreateCluster",
+      "ecs:CreateService",
+      "ecs:DeleteCluster",
+      "ecs:DeleteService",
+      "ecs:DeregisterTaskDefinition",
+      "ecs:DescribeClusters",
+      "ecs:DescribeServices",
+      "ecs:DescribeTaskDefinition",
+      "ecs:ListTagsForResource",
+      "ecs:RegisterTaskDefinition",
+      "ecs:TagResource",
+      "ecs:UntagResource",
+      "ecs:UpdateService",
+    ]
+
+    resources = ["*"]
+  }
+
+  # IAM - PassRole
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "iam:PassRole",
+    ]
+
+    resources = [
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/fider-dev-execution-role",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/fider-dev-task-role",
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "iam:PassedToService"
+
+      values = [
+        "ecs-tasks.amazonaws.com",
+      ]
+    }
+  }
+
+  # IAM - Roles
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "iam:AttachRolePolicy",
       "iam:CreateRole",
-      "iam:TagRole",
+      "iam:DeleteRole",
+      "iam:DetachRolePolicy",
       "iam:GetRole",
-      "iam:ListRolePolicies",
       "iam:ListAttachedRolePolicies",
       "iam:ListInstanceProfilesForRole",
-      "iam:DeleteRole",
+      "iam:ListRolePolicies",
+      "iam:TagRole",
+      "iam:UntagRole",
+      "iam:UpdateAssumeRolePolicy",
     ]
 
     resources = [
@@ -284,16 +590,22 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     ]
   }
 
+  # IAM - Managed Policies
+
   statement {
     effect = "Allow"
 
     actions = [
       "iam:CreatePolicy",
-      "iam:TagPolicy",
+      "iam:CreatePolicyVersion",
+      "iam:DeletePolicy",
+      "iam:DeletePolicyVersion",
       "iam:GetPolicy",
       "iam:GetPolicyVersion",
       "iam:ListPolicyVersions",
-      "iam:DeletePolicy",
+      "iam:SetDefaultPolicyVersion",
+      "iam:TagPolicy",
+      "iam:UntagPolicy",
     ]
 
     resources = [
@@ -301,15 +613,82 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     ]
   }
 
+  # RDS
+
   statement {
     effect = "Allow"
 
     actions = [
-      "ssm:PutParameter",
+      "rds:AddTagsToResource",
+      "rds:CreateDBInstance",
+      "rds:CreateDBSubnetGroup",
+      "rds:DeleteDBInstance",
+      "rds:DeleteDBSubnetGroup",
+      "rds:DescribeDBInstances",
+      "rds:DescribeDBSubnetGroups",
+      "rds:ListTagsForResource",
+      "rds:ModifyDBInstance",
+      "rds:ModifyDBSubnetGroup",
+      "rds:RemoveTagsFromResource",
+    ]
+
+    resources = ["*"]
+  }
+
+  # Secrets Manager - RDS managed credentials
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "secretsmanager:CreateSecret",
+      "secretsmanager:TagResource",
+    ]
+
+    resources = ["*"]
+  }
+
+  # KMS - RDS managed credentials
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "kms:DescribeKey",
+    ]
+
+    resources = [
+      "arn:aws:kms:eu-west-2:${data.aws_caller_identity.current.account_id}:key/*",
+    ]
+  }
+
+  # Route 53
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "route53:ChangeResourceRecordSets",
+      "route53:GetChange",
+      "route53:GetHostedZone",
+      "route53:ListResourceRecordSets",
+    ]
+
+    resources = ["*"]
+  }
+
+  # SSM
+
+  statement {
+    effect = "Allow"
+
+    actions = [
       "ssm:AddTagsToResource",
+      "ssm:DeleteParameter",
       "ssm:GetParameter",
       "ssm:ListTagsForResource",
-      "ssm:DeleteParameter",
+      "ssm:PutParameter",
+      "ssm:RemoveTagsFromResource",
     ]
 
     resources = [
@@ -322,39 +701,6 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
 
     actions = [
       "ssm:DescribeParameters",
-    ]
-
-    resources = ["*"]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "ec2:CreateVpc",
-      "ec2:CreateTags",
-      "ec2:DeleteVpc",
-    ]
-
-    resources = ["*"]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "ec2:ModifyVpcAttribute",
-    ]
-
-    resources = ["arn:aws:ec2:eu-west-2:${data.aws_caller_identity.current.account_id}:vpc/*"]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "ec2:DescribeVpcs",
-      "ec2:DescribeVpcAttribute",
     ]
 
     resources = ["*"]
