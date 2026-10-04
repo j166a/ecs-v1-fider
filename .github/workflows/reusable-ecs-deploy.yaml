@@ -1,0 +1,220 @@
+name: Reusable ECS Deploy
+
+on:
+  workflow_call:
+    inputs:
+      aws_region:
+        required: true
+        type: string
+      cluster:
+        required: true
+        type: string
+      service:
+        required: true
+        type: string
+      container_name:
+        required: true
+        type: string
+      ecr_repository:
+        required: true
+        type: string
+      image_tag:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_APP_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ inputs.aws_region }}
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
+
+      - name: Set image URI
+        id: image
+        env:
+          REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          REPOSITORY: ${{ inputs.ecr_repository }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        run: echo "uri=${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch current task definition
+        env:
+          SERVICE: ${{ inputs.service }}
+          CLUSTER: ${{ inputs.cluster }}
+        run: |
+          TASK_DEFINITION=$(aws ecs describe-services \
+            --cluster "$CLUSTER" \
+            --services "$SERVICE" \
+            --query 'services[0].taskDefinition' \
+            --output text)
+
+          aws ecs describe-task-definition \
+            --task-definition "$TASK_DEFINITION" \
+            --query 'taskDefinition' \
+            > task-definition.json
+
+      - name: Validate container name
+        env:
+          CONTAINER_NAME: ${{ inputs.container_name }}
+        run: |
+          jq -e \
+            --arg container "$CONTAINER_NAME" \
+            '.containerDefinitions[] | select(.name == $container)' \
+            task-definition.json > /dev/null
+
+      - name: Update container image
+        env:
+          CONTAINER_NAME: ${{ inputs.container_name }}
+          IMAGE: ${{ steps.image.outputs.uri }}
+        run: |
+          jq \
+            --arg container "$CONTAINER_NAME" \
+            --arg image "$IMAGE" \
+            'del(
+              .taskDefinitionArn,
+              .revision,
+              .status,
+              .requiresAttributes,
+              .compatibilities,
+              .registeredAt,
+              .registeredBy
+            )
+            | .containerDefinitions |= map(
+                if .name == $container
+                then .image = $image
+                else .
+                end
+              )' \
+            task-definition.json > updated-task-definition.json
+
+      - name: Register task definition
+        id: task-definition
+        run: |
+          TASK_DEFINITION_ARN=$(aws ecs register-task-definition \
+            --cli-input-json file://updated-task-definition.json \
+            --query 'taskDefinition.taskDefinitionArn' \
+            --output text)
+
+          echo "arn=$TASK_DEFINITION_ARN" >> "$GITHUB_OUTPUT"
+          echo "Registered task definition: $TASK_DEFINITION_ARN"
+
+      - name: Get service network configuration
+        id: network
+        env:
+          CLUSTER: ${{ inputs.cluster }}
+          SERVICE: ${{ inputs.service }}
+        run: |
+          NETWORK_CONFIGURATION=$(aws ecs describe-services \
+            --cluster "$CLUSTER" \
+            --services "$SERVICE" \
+            --query 'services[0].networkConfiguration' \
+            --output json | jq -c '.')
+
+          echo "configuration=$NETWORK_CONFIGURATION" >> "$GITHUB_OUTPUT"
+
+      - name: Run database migration
+        id: migration
+        env:
+          CLUSTER: ${{ inputs.cluster }}
+          CONTAINER_NAME: ${{ inputs.container_name }}
+          TASK_DEFINITION: ${{ steps.task-definition.outputs.arn }}
+          NETWORK_CONFIGURATION: ${{ steps.network.outputs.configuration }}
+        run: |
+          TASK_ARN=$(aws ecs run-task \
+            --cluster "$CLUSTER" \
+            --launch-type FARGATE \
+            --task-definition "$TASK_DEFINITION" \
+            --network-configuration "$NETWORK_CONFIGURATION" \
+            --overrides "{
+              \"containerOverrides\": [
+                {
+                  \"name\": \"$CONTAINER_NAME\",
+                  \"command\": [\"migrate\"]
+                }
+              ]
+            }" \
+            --query 'tasks[0].taskArn' \
+            --output text)
+
+          if [[ -z "$TASK_ARN" || "$TASK_ARN" == "None" ]]; then
+            echo "Failed to start migration task."
+            exit 1
+          fi
+
+          echo "Migration task: $TASK_ARN"
+          echo "task_arn=$TASK_ARN" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for migration
+        env:
+          CLUSTER: ${{ inputs.cluster }}
+          TASK_ARN: ${{ steps.migration.outputs.task_arn }}
+        run: |
+          aws ecs wait tasks-stopped \
+            --cluster "$CLUSTER" \
+            --tasks "$TASK_ARN"
+
+      - name: Check migration result
+        env:
+          CLUSTER: ${{ inputs.cluster }}
+          TASK_ARN: ${{ steps.migration.outputs.task_arn }}
+        run: |
+          TASK_RESULT=$(aws ecs describe-tasks \
+            --cluster "$CLUSTER" \
+            --tasks "$TASK_ARN" \
+            --output json)
+
+          EXIT_CODE=$(jq -r '.tasks[0].containers[0].exitCode // "unknown"' <<< "$TASK_RESULT")
+          STOPPED_REASON=$(jq -r '.tasks[0].stoppedReason // "unknown"' <<< "$TASK_RESULT")
+          CONTAINER_REASON=$(jq -r '.tasks[0].containers[0].reason // "none"' <<< "$TASK_RESULT")
+
+          echo "Migration exit code: $EXIT_CODE"
+
+          if [[ "$EXIT_CODE" != "0" ]]; then
+            echo "Migration failed."
+            echo "Stopped reason: $STOPPED_REASON"
+            echo "Container reason: $CONTAINER_REASON"
+            exit 1
+          fi
+
+          echo "Migration completed successfully."
+
+      - name: Update ECS service
+        env:
+          CLUSTER: ${{ inputs.cluster }}
+          SERVICE: ${{ inputs.service }}
+          TASK_DEFINITION: ${{ steps.task-definition.outputs.arn }}
+        run: |
+          aws ecs update-service \
+            --cluster "$CLUSTER" \
+            --service "$SERVICE" \
+            --task-definition "$TASK_DEFINITION"
+
+      - name: Wait for service stability
+        env:
+          CLUSTER: ${{ inputs.cluster }}
+          SERVICE: ${{ inputs.service }}
+        run: |
+          aws ecs wait services-stable \
+            --cluster "$CLUSTER" \
+            --services "$SERVICE"
+
+      - name: Verify application health
+        run: |
+          curl --fail --silent --show-error \
+            https://fider.labs.imadahmed.uk/_health
