@@ -103,7 +103,7 @@ const SignUpPage = () => {
         <img className="logo" alt="Logo" src="https://login.fider.io/static/assets/logo.png" />
       </div>
 
-      <h3 className="text-display mb-2">1. Who are you? - Deployment Test</h3>
+      <h3 className="text-display mb-2">1. Who are you?</h3>
       <DisplayError fields={["token"]} error={error} />
 
       {user ? (
