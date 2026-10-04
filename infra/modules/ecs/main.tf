@@ -102,5 +102,11 @@ resource "aws_ecs_service" "this" {
     rollback = true
   }
 
+  lifecycle {
+    ignore_changes = [
+      task_definition
+    ]
+  }
+
   tags = var.tags
 }
