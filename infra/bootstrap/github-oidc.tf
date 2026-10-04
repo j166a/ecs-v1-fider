@@ -276,6 +276,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
       "iam:ListRolePolicies",
       "iam:ListAttachedRolePolicies",
       "iam:ListInstanceProfilesForRole",
+      "iam:DeleteRole",
     ]
 
     resources = [
@@ -292,6 +293,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
       "iam:GetPolicy",
       "iam:GetPolicyVersion",
       "iam:ListPolicyVersions",
+      "iam:DeletePolicy",
     ]
 
     resources = [
@@ -335,6 +337,16 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     ]
 
     resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ec2:ModifyVpcAttribute",
+    ]
+
+    resources = ["arn:aws:ec2:eu-west-2:${data.aws_caller_identity.current.account_id}:vpc/*"]
   }
 
   statement {
