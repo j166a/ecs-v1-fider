@@ -134,6 +134,7 @@ module "observability" {
   ecs_service_name        = module.ecs.service_name
   alb_arn_suffix          = module.alb.alb_arn_suffix
   target_group_arn_suffix = module.alb.target_group_arn_suffix
+  db_instance_identifier  = module.rds.db_instance_identifier
 
   tags = local.common_tags
 }

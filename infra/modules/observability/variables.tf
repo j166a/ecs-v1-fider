@@ -28,3 +28,8 @@ variable "target_group_arn_suffix" {
   description = "ARN suffix of the ALB target group"
   type        = string
 }
+
+variable "db_instance_identifier" {
+  description = "value"
+  type        = string
+}

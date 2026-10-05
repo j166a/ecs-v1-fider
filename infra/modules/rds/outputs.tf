@@ -13,6 +13,11 @@ output "db_name" {
   value       = aws_db_instance.this.db_name
 }
 
+output "db_instance_identifier" {
+  description = "Instance identifier of the RDS PostgreSQL database"
+  value       = aws_db_instance.this.identifier
+}
+
 output "username" {
   description = "Master PostgreSQL username"
   value       = aws_db_instance.this.username
