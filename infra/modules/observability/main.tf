@@ -85,6 +85,28 @@ resource "aws_cloudwatch_metric_alarm" "alb_5xx" {
   tags = var.tags
 }
 
+resource "aws_cloudwatch_metric_alarm" "alb_target_5xx" {
+  alarm_name        = "${var.name}-alb-target-5xx"
+  alarm_description = "Application targets are returning HTTP 5xx responses"
+
+  namespace           = "AWS/ApplicationELB"
+  metric_name         = "HTTPCode_Target_5XX_Count"
+  statistic           = "Sum"
+  period              = 300
+  evaluation_periods  = 2
+  threshold           = 5
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+
+  dimensions = {
+    LoadBalancer = var.alb_arn_suffix
+    TargetGroup  = var.target_group_arn_suffix
+  }
+
+  treat_missing_data = "notBreaching"
+
+  tags = var.tags
+}
+
 resource "aws_cloudwatch_metric_alarm" "rds_cpu_high" {
   alarm_name        = "${var.name}-rds-cpu-high"
   alarm_description = "RDS CPU utilisation is above 80%"
