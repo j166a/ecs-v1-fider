@@ -105,3 +105,24 @@ resource "aws_cloudwatch_metric_alarm" "rds_cpu_high" {
 
   tags = var.tags
 }
+
+resource "aws_cloudwatch_metric_alarm" "rds_free_storage_low" {
+  alarm_name        = "${var.name}-rds-free-storage-low"
+  alarm_description = "RDS free storage is below 2 GiB"
+
+  namespace           = "AWS/RDS"
+  metric_name         = "FreeStorageSpace"
+  statistic           = "Average"
+  period              = 300
+  evaluation_periods  = 2
+  threshold           = 2147483648 # 2 GiB in bytes (2 x 1,024^3)
+  comparison_operator = "LessThanThreshold"
+
+  dimensions = {
+    DBInstanceIdentifier = var.db_instance_identifier
+  }
+
+  treat_missing_data = "notBreaching"
+
+  tags = var.tags
+}
