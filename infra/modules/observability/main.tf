@@ -41,3 +41,25 @@ resource "aws_cloudwatch_metric_alarm" "ecs_memory_high" {
 
   tags = var.tags
 }
+
+resource "aws_cloudwatch_metric_alarm" "alb_unhealthy_targets" {
+  alarm_name        = "${var.name}-alb-unhealthy-targets"
+  alarm_description = "ALB has one or more unhealthy targets"
+
+  namespace           = "AWS/ApplicationELB"
+  metric_name         = "UnHealthyHostCount"
+  statistic           = "Maximum"
+  period              = 60
+  evaluation_periods  = 2
+  threshold           = 1
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+
+  dimensions = {
+    LoadBalancer = var.alb_arn_suffix
+    TargetGroup  = var.target_group_arn_suffix
+  }
+
+  treat_missing_data = "notBreaching"
+
+  tags = var.tags
+}
