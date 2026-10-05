@@ -126,3 +126,24 @@ resource "aws_cloudwatch_metric_alarm" "rds_free_storage_low" {
 
   tags = var.tags
 }
+
+resource "aws_cloudwatch_metric_alarm" "rds_connections_high" {
+  alarm_name        = "${var.name}-rds-connections-high"
+  alarm_description = "RDS database connections are above 80"
+
+  namespace           = "AWS/RDS"
+  metric_name         = "DatabaseConnections"
+  statistic           = "Average"
+  period              = 300
+  evaluation_periods  = 2
+  threshold           = 80
+  comparison_operator = "GreaterThanThreshold"
+
+  dimensions = {
+    DBInstanceIdentifier = var.db_instance_identifier
+  }
+
+  treat_missing_data = "notBreaching"
+
+  tags = var.tags
+}
