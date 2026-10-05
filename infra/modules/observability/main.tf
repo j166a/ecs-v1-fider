@@ -63,3 +63,24 @@ resource "aws_cloudwatch_metric_alarm" "alb_unhealthy_targets" {
 
   tags = var.tags
 }
+
+resource "aws_cloudwatch_metric_alarm" "alb_5xx" {
+  alarm_name        = "${var.name}-alb-5xx"
+  alarm_description = "ALB is returning HTTP 5xx responses"
+
+  namespace           = "AWS/ApplicationELB"
+  metric_name         = "HTTPCode_ELB_5XX_Count"
+  statistic           = "Sum"
+  period              = 300
+  evaluation_periods  = 2
+  threshold           = 5
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+
+  dimensions = {
+    LoadBalancer = var.alb_arn_suffix
+  }
+
+  treat_missing_data = "notBreaching"
+
+  tags = var.tags
+}
