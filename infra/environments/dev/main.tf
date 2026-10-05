@@ -125,3 +125,13 @@ module "ecs" {
 
   tags = local.common_tags
 }
+
+module "observability" {
+  source = "../../modules/observability"
+
+  name             = local.name
+  ecs_cluster_name = module.ecs.cluster_name
+  ecs_service_name = module.ecs.service_name
+
+  tags = local.common_tags
+}
