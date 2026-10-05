@@ -18,3 +18,13 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "alb_arn_suffix" {
+  description = "ARN suffix of the Application Load Balancer"
+  type        = string
+}
+
+variable "target_group_arn_suffix" {
+  description = "ARN suffix of the ALB target group"
+  type        = string
+}
