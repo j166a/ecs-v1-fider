@@ -17,6 +17,9 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cpu_high" {
 
   treat_missing_data = "notBreaching"
 
+  alarm_actions = [aws_sns_topic.alerts.arn]
+  ok_actions    = [aws_sns_topic.alerts.arn]
+
   tags = var.tags
 }
 
@@ -38,6 +41,9 @@ resource "aws_cloudwatch_metric_alarm" "ecs_memory_high" {
   }
 
   treat_missing_data = "notBreaching"
+
+  alarm_actions = [aws_sns_topic.alerts.arn]
+  ok_actions    = [aws_sns_topic.alerts.arn]
 
   tags = var.tags
 }
@@ -61,6 +67,9 @@ resource "aws_cloudwatch_metric_alarm" "alb_unhealthy_targets" {
 
   treat_missing_data = "notBreaching"
 
+  alarm_actions = [aws_sns_topic.alerts.arn]
+  ok_actions    = [aws_sns_topic.alerts.arn]
+
   tags = var.tags
 }
 
@@ -81,6 +90,9 @@ resource "aws_cloudwatch_metric_alarm" "alb_5xx" {
   }
 
   treat_missing_data = "notBreaching"
+
+  alarm_actions = [aws_sns_topic.alerts.arn]
+  ok_actions    = [aws_sns_topic.alerts.arn]
 
   tags = var.tags
 }
@@ -104,6 +116,9 @@ resource "aws_cloudwatch_metric_alarm" "alb_target_5xx" {
 
   treat_missing_data = "notBreaching"
 
+  alarm_actions = [aws_sns_topic.alerts.arn]
+  ok_actions    = [aws_sns_topic.alerts.arn]
+
   tags = var.tags
 }
 
@@ -124,6 +139,9 @@ resource "aws_cloudwatch_metric_alarm" "rds_cpu_high" {
   }
 
   treat_missing_data = "notBreaching"
+
+  alarm_actions = [aws_sns_topic.alerts.arn]
+  ok_actions    = [aws_sns_topic.alerts.arn]
 
   tags = var.tags
 }
@@ -146,6 +164,9 @@ resource "aws_cloudwatch_metric_alarm" "rds_free_storage_low" {
 
   treat_missing_data = "notBreaching"
 
+  alarm_actions = [aws_sns_topic.alerts.arn]
+  ok_actions    = [aws_sns_topic.alerts.arn]
+
   tags = var.tags
 }
 
@@ -166,6 +187,15 @@ resource "aws_cloudwatch_metric_alarm" "rds_connections_high" {
   }
 
   treat_missing_data = "notBreaching"
+
+  alarm_actions = [aws_sns_topic.alerts.arn]
+  ok_actions    = [aws_sns_topic.alerts.arn]
+
+  tags = var.tags
+}
+
+resource "aws_sns_topic" "alerts" {
+  name = "${var.name}-alerts"
 
   tags = var.tags
 }
