@@ -43,13 +43,13 @@ module "iam" {
   name = local.name
   tags = local.common_tags
 
-  ses_identity_arn = var.ses_identity_arn
-
   ssm_parameter_arns = [
     module.ssm.jwt_secret_arn,
   ]
 
   rds_secret_arn = module.rds.master_user_secret_arn
+
+  ses_from_address = var.email_noreply
 }
 
 module "ssm" {

@@ -9,11 +9,6 @@ variable "tags" {
   default     = {}
 }
 
-variable "ses_identity_arn" {
-  description = "ARN of the verified SES identity used by Fider"
-  type        = string
-}
-
 variable "ssm_parameter_arns" {
   description = "ARNs of SSM paramters the ECS execution role may retrieve"
   type        = list(string)
@@ -22,5 +17,10 @@ variable "ssm_parameter_arns" {
 
 variable "rds_secret_arn" {
   description = "ARN of the RDS-managed Secrets Manager secret"
+  type        = string
+}
+
+variable "ses_from_address" {
+  description = "Email address Fider is allowed to use as the SES From address"
   type        = string
 }

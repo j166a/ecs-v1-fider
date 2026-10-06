@@ -39,7 +39,13 @@ data "aws_iam_policy_document" "ecs_task_ses" {
       "ses:SendRawEmail",
     ]
 
-    resources = [var.ses_identity_arn]
+    resources = ["*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "ses:FromAddress"
+      values   = [var.ses_from_address]
+    }
   }
 
   statement {
