@@ -51,6 +51,15 @@ jobs:
       - name: Run TFLint
         run: tflint --recursive
 
+      - name: Run Checkov action
+        uses: bridgecrewio/checkov-action@99bb2caf247dfd9f03cf984373bc6043d4e32ebf # v12.1347.0
+        with:
+          directory: infra/
+          compact: true
+          quiet: true
+          soft_fail: true
+          framework: terraform
+
   plan:
     needs: terraform
     runs-on: ubuntu-latest
