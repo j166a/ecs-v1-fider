@@ -42,6 +42,8 @@ resource "aws_ecs_task_definition" "this" {
       image     = var.image_uri
       essential = true
 
+      readonlyRootFilesystem = true
+
       portMappings = [{
         containerPort = 3000
         protocol      = "tcp"
