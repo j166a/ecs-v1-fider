@@ -15,11 +15,6 @@ variable "vpc_cidr" {
   type        = string
 }
 
-variable "ses_identity_arn" {
-  description = "ARN of the verified identity used by Fider"
-  type        = string
-}
-
 variable "jwt_secret" {
   description = "JWT secret used by Fider"
   type        = string

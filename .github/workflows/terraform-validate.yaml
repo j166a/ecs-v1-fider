@@ -62,7 +62,6 @@ jobs:
     env:
       TF_VAR_base_url: ${{ vars.TF_VAR_base_url }}
       TF_VAR_vpc_cidr: ${{ vars.TF_VAR_vpc_cidr }}
-      TF_VAR_ses_identity_arn: ${{ vars.TF_VAR_ses_identity_arn }}
       TF_VAR_domain_name: ${{ vars.TF_VAR_domain_name }}
       TF_VAR_route53_zone_id: ${{ vars.TF_VAR_route53_zone_id }}
       TF_VAR_image_tag: ${{ vars.TF_VAR_image_tag }}
