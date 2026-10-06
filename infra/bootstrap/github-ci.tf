@@ -299,6 +299,21 @@ data "aws_iam_policy_document" "github_actions_terraform_plan" {
 
     resources = ["*"]
   }
+
+  # SNS
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "sns:GetTopicAttributes",
+      "sns:ListTagsForResource",
+    ]
+
+    resources = [
+      "arn:aws:sns:${var.aws_region}:${data.aws_caller_identity.current.account_id}:fider-dev-alerts"
+    ]
+  }
 }
 
 resource "aws_iam_role_policy" "github_actions_terraform_plan" {
