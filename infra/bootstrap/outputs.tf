@@ -1,6 +1,6 @@
 output "state_bucket_name" {
   description = "S3 bucket used for Terraform remote state"
-  value       = aws_s3_bucket.state.bucket
+  value       = var.state_bucket_name
 }
 
 output "ecr_repository_url" {

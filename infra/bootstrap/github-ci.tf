@@ -83,7 +83,7 @@ data "aws_iam_policy_document" "github_actions_terraform_plan" {
     ]
 
     resources = [
-      aws_s3_bucket.state.arn,
+      "arn:aws:s3:::${var.state_bucket_name}",
     ]
 
     condition {
@@ -105,7 +105,7 @@ data "aws_iam_policy_document" "github_actions_terraform_plan" {
     ]
 
     resources = [
-      "${aws_s3_bucket.state.arn}/fider/dev/terraform.tfstate",
+      "arn:aws:s3:::${var.state_bucket_name}/fider/dev/terraform.tfstate",
     ]
   }
 
@@ -119,7 +119,7 @@ data "aws_iam_policy_document" "github_actions_terraform_plan" {
     ]
 
     resources = [
-      "${aws_s3_bucket.state.arn}/fider/dev/terraform.tfstate.tflock",
+      "arn:aws:s3:::${var.state_bucket_name}/fider/dev/terraform.tfstate.tflock",
     ]
   }
 
