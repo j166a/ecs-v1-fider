@@ -148,7 +148,7 @@ data "aws_iam_policy_document" "github_actions_terraform_plan" {
     ]
 
     resources = [
-      "arn:aws:acm:eu-west-2:${data.aws_caller_identity.current.account_id}:certificate/*",
+      "arn:aws:acm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:certificate/*",
     ]
   }
 

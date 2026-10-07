@@ -7,6 +7,11 @@ source "$SCRIPT_DIR/lib/common.sh"
 
 DEV_DIR="$SCRIPT_DIR/../environments/dev"
 
+get_aws_region() {
+  terraform -chdir="$SCRIPT_DIR/../bootstrap-state" \
+    output -raw aws_region
+}
+
 get_state_bucket() {
   terraform -chdir="$SCRIPT_DIR/../bootstrap-state" \
     output -raw state_bucket_name
@@ -14,11 +19,13 @@ get_state_bucket() {
 
 bootstrap_dev_environment() {
   local state_bucket="$1"
+  local aws_region="$2"
 
   info "Initialising dev environment..."
   terraform -chdir="$DEV_DIR" init \
     -reconfigure \
-    -backend-config="bucket=$state_bucket"
+    -backend-config="bucket=$state_bucket" \
+    -backend-config="region=$aws_region"
 
   info "Applying dev infrastructure..."
   terraform -chdir="$DEV_DIR" apply
@@ -42,10 +49,13 @@ main() {
   "$SCRIPT_DIR/bootstrap-image.sh"
 
   local state_bucket
+  local aws_region
+
   state_bucket="$(get_state_bucket)"
+  aws_region="$(get_aws_region)"
 
   echo
-  bootstrap_dev_environment "$state_bucket"
+  bootstrap_dev_environment "$state_bucket" "$aws_region"
 
   echo
   run_migration

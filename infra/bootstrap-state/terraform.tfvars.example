@@ -1,1 +1,2 @@
 state_bucket_name = "your-terraform-state-bucket"
+aws_region        = "eu-west-2"

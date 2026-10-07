@@ -5,8 +5,18 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/common.sh"
 
-AWS_REGION="eu-west-2"
-BOOTSTRAP_DIR="infra/bootstrap"
+BOOTSTRAP_DIR="$SCRIPT_DIR/../bootstrap"
+
+get_aws_region() {
+  AWS_REGION="$(
+    terraform -chdir="$BOOTSTRAP_DIR" output -raw aws_region
+  )"
+
+  if [[ -z "$AWS_REGION" ]]; then
+    error "Terraform did not return an AWS region."
+    exit 1
+  fi
+}
 
 get_ecr_repository() {
   ECR_REPO_URL="$(
@@ -94,6 +104,7 @@ main() {
   check_aws_identity
   echo
 
+  get_aws_region
   get_ecr_repository
   get_image_details
   echo
