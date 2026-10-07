@@ -11,6 +11,56 @@ data "aws_iam_policy_document" "ecs_tasks_assume_role" {
   }
 }
 
+data "aws_caller_identity" "current" {}
+
+data "aws_region" "current" {}
+
+data "aws_iam_policy_document" "ecs_execution" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ecr:GetAuthorizationToken",
+    ]
+
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage",
+    ]
+
+    resources = [
+      var.ecr_repository_arn
+    ]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+
+    resources = [
+      "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/ecs/${var.name}:log-stream:*"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "ecs_execution" {
+  name   = "${var.name}-execution"
+  policy = data.aws_iam_policy_document.ecs_execution.json
+
+  tags = var.tags
+}
+
 resource "aws_iam_role" "ecs_execution" {
   name               = "${var.name}-execution-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_tasks_assume_role.json
@@ -20,7 +70,7 @@ resource "aws_iam_role" "ecs_execution" {
 
 resource "aws_iam_role_policy_attachment" "ecs_execution" {
   role       = aws_iam_role.ecs_execution.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+  policy_arn = aws_iam_policy.ecs_execution.arn
 }
 
 resource "aws_iam_role" "ecs_task" {

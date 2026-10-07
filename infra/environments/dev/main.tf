@@ -8,6 +8,10 @@ locals {
   }
 }
 
+data "aws_ecr_repository" "fider" {
+  name = "fider"
+}
+
 module "vpc" {
   source = "../../modules/vpc"
 
@@ -50,6 +54,8 @@ module "iam" {
   rds_secret_arn = module.rds.master_user_secret_arn
 
   ses_from_address = var.email_noreply
+
+  ecr_repository_arn = data.aws_ecr_repository.fider.arn
 }
 
 module "ssm" {
@@ -96,9 +102,6 @@ module "route53" {
   alb_zone_id  = module.alb.zone_id
 }
 
-data "aws_ecr_repository" "fider" {
-  name = "fider"
-}
 
 module "ecs" {
   source = "../../modules/ecs"
