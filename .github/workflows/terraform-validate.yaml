@@ -94,7 +94,9 @@ jobs:
 
       - name: Initialise dev environment
         working-directory: infra/environments/dev
-        run: terraform init
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}"
 
       - name: Terraform plan
         working-directory: infra/environments/dev
