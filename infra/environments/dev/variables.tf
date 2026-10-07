@@ -49,5 +49,5 @@ variable "email_noreply" {
 variable "ecs_desired_count" {
   description = "Desired number of ECS service tasks"
   type        = number
-  default     = 1
+  default     = 0
 }
