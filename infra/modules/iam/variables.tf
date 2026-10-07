@@ -24,3 +24,8 @@ variable "ses_from_address" {
   description = "Email address Fider is allowed to use as the SES From address"
   type        = string
 }
+
+variable "ecr_repository_arn" {
+  description = "ARN of the ECR repository the ECS execution role may pull from"
+  type        = string
+}
