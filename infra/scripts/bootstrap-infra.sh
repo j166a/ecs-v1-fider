@@ -2,39 +2,11 @@
 
 set -euo pipefail
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/common.sh"
 
 BOOTSTRAP_STATE_DIR="infra/bootstrap-state"
 BOOTSTRAP_DIR="infra/bootstrap"
-
-info() {
-  echo -e "${BLUE}$1${NC}"
-}
-
-success() {
-  echo -e "${GREEN}$1${NC}"
-}
-
-error() {
-  echo -e "${RED}$1${NC}" >&2
-}
-
-check_prerequisites() {
-  for command in aws terraform; do
-    if ! command -v "$command" >/dev/null 2>&1; then
-      error "Required command '$command' is not installed."
-      exit 1
-    fi
-  done
-
-  info "Checking AWS identity..."
-  aws sts get-caller-identity >/dev/null
-
-  success "Prerequisites passed."
-}
 
 bootstrap_state_bucket() {
   info "Initialising Terraform state bootstrap..."
@@ -65,7 +37,8 @@ main() {
   info "Fider infrastructure bootstrap"
   echo
 
-  check_prerequisites
+  require_commands aws terraform
+  check_aws_identity
   echo
 
   bootstrap_state_bucket

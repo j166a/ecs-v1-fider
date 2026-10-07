@@ -2,44 +2,11 @@
 
 set -euo pipefail
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/common.sh"
 
 AWS_REGION="eu-west-2"
 BOOTSTRAP_DIR="infra/bootstrap"
-
-info() {
-  echo -e "${BLUE}$1${NC}"
-}
-
-success() {
-  echo -e "${GREEN}$1${NC}"
-}
-
-warning() {
-  echo -e "${YELLOW}$1${NC}"
-}
-
-error() {
-  echo -e "${RED}$1${NC}" >&2
-}
-
-check_prerequisites() {
-  for command in aws docker git syft grype terraform; do
-    if ! command -v "$command" >/dev/null 2>&1; then
-      error "Required command '$command' is not installed."
-      exit 1
-    fi
-  done
-
-  info "Checking AWS identity..."
-  aws sts get-caller-identity >/dev/null
-
-  success "Prerequisites passed."
-}
 
 get_ecr_repository() {
   ECR_REPO_URL="$(
@@ -123,7 +90,8 @@ main() {
   info "Fider initial image bootstrap"
   echo
 
-  check_prerequisites
+  require_commands aws docker git syft grype terraform
+  check_aws_identity
   echo
 
   get_ecr_repository

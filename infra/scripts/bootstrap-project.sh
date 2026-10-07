@@ -2,25 +2,10 @@
 
 set -euo pipefail
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-NC='\033[0m'
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/common.sh"
+
 DEV_DIR="$SCRIPT_DIR/../environments/dev"
-
-info() {
-  echo -e "${BLUE}$1${NC}"
-}
-
-success() {
-  echo -e "${GREEN}$1${NC}"
-}
-
-error() {
-  echo -e "${RED}$1${NC}" >&2
-}
 
 get_state_bucket() {
   terraform -chdir="$SCRIPT_DIR/../bootstrap-state" \
