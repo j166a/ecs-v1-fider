@@ -53,6 +53,7 @@ module "iam" {
 
   secret_arns = [
     module.rds.master_user_secret_arn,
+    module.secrets.jwt_secret_arn,
   ]
 
   ses_from_address = var.email_noreply
@@ -60,11 +61,10 @@ module "iam" {
   ecr_repository_arn = data.aws_ecr_repository.fider.arn
 }
 
-module "ssm" {
-  source = "../../modules/ssm"
+module "secrets" {
+  source = "../../modules/secrets"
 
   environment = var.environment
-  jwt_secret  = var.jwt_secret
   tags        = local.common_tags
 }
 
@@ -112,7 +112,7 @@ module "ecs" {
   region             = var.aws_region
   execution_role_arn = module.iam.ecs_execution_role_arn
   task_role_arn      = module.iam.ecs_task_role_arn
-  jwt_secret_arn     = module.ssm.jwt_secret_arn
+  jwt_secret_arn     = module.secrets.jwt_secret_arn
   base_url           = var.base_url
   email_noreply      = var.email_noreply
   desired_count      = var.ecs_desired_count
