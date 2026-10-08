@@ -24,6 +24,7 @@ resource "aws_db_instance" "this" {
   username = var.db_username
 
   manage_master_user_password = true
+  auto_minor_version_upgrade  = true
 
   db_subnet_group_name   = aws_db_subnet_group.this.name
   vpc_security_group_ids = [var.security_group_id]
