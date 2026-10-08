@@ -52,7 +52,7 @@ jobs:
         run: tflint --recursive
 
       - name: Run Checkov action
-        uses: bridgecrewio/checkov-action@99bb2caf247dfd9f03cf984373bc6043d4e32ebf # v12.1347.0
+        uses: bridgecrewio/checkov-action@7b1bd992e2c40a3404e3511944aeb8d014703d9a # v12.3129.0
         with:
           directory: infra/
           compact: true
