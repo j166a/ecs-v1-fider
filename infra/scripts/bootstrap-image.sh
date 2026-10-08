@@ -6,6 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/common.sh"
 
 BOOTSTRAP_DIR="$SCRIPT_DIR/../bootstrap"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 get_aws_region() {
   AWS_REGION="$(
@@ -33,7 +34,7 @@ get_ecr_repository() {
 }
 
 get_image_details() {
-  GIT_SHA="$(git rev-parse HEAD)"
+  GIT_SHA="$(git -C "$REPO_ROOT" rev-parse HEAD)"
   IMAGE_URI="${ECR_REPO_URL}:${GIT_SHA}"
 
   info "Image tag: $GIT_SHA"
@@ -58,7 +59,7 @@ build_image() {
   docker build \
     --platform linux/amd64 \
     -t "$IMAGE_URI" \
-    .
+    "$REPO_ROOT"
 }
 
 generate_sbom() {
