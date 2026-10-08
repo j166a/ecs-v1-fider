@@ -15,6 +15,7 @@ resource "aws_ecs_cluster" "this" {
 }
 
 resource "aws_cloudwatch_log_group" "this" {
+  # checkov:skip=CKV_AWS_338:Short retention is intentional
   name              = "/ecs/${var.name}"
   retention_in_days = 7
 
