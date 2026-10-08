@@ -282,15 +282,17 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     resources = ["*"]
   }
 
-  # Secrets Manager - RDS managed credentials
+  # Secrets Manager
 
   statement {
     effect = "Allow"
 
     actions = [
       "secretsmanager:CreateSecret",
-      "secretsmanager:TagResource",
+      "secretsmanager:DeleteSecret",
       "secretsmanager:DescribeSecret",
+      "secretsmanager:TagResource",
+      "secretsmanager:UntagResource",
     ]
 
     resources = ["*"]
@@ -320,35 +322,6 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
       "route53:GetChange",
       "route53:GetHostedZone",
       "route53:ListResourceRecordSets",
-    ]
-
-    resources = ["*"]
-  }
-
-  # SSM
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "ssm:AddTagsToResource",
-      "ssm:DeleteParameter",
-      "ssm:GetParameter",
-      "ssm:ListTagsForResource",
-      "ssm:PutParameter",
-      "ssm:RemoveTagsFromResource",
-    ]
-
-    resources = [
-      "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/fider/dev/jwt-secret",
-    ]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "ssm:DescribeParameters",
     ]
 
     resources = ["*"]

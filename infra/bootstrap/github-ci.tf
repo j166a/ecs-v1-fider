@@ -286,18 +286,19 @@ data "aws_iam_policy_document" "github_actions_terraform_plan" {
     resources = ["*"]
   }
 
-  # SSM
+  # Secrets Manager
 
   statement {
     effect = "Allow"
 
     actions = [
-      "ssm:DescribeParameters",
-      "ssm:GetParameter",
-      "ssm:ListTagsForResource",
+      "secretsmanager:DescribeSecret",
+      "secretsmanager:GetResourcePolicy",
     ]
 
-    resources = ["*"]
+    resources = [
+      "arn:aws:secretsmanager:${var.aws_region}:${data.aws_caller_identity.current.account_id}:secret:/fider/dev/jwt-secret-??????",
+    ]
   }
 
   # SNS
