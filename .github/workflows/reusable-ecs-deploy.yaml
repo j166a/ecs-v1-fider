@@ -87,15 +87,26 @@ jobs:
           jq \
             --arg container "$CONTAINER_NAME" \
             --arg image "$IMAGE" \
-            'del(
-              .taskDefinitionArn,
-              .revision,
-              .status,
-              .requiresAttributes,
-              .compatibilities,
-              .registeredAt,
-              .registeredBy
-            )
+            '{
+              family,
+              taskRoleArn,
+              executionRoleArn,
+              networkMode,
+              containerDefinitions,
+              volumes,
+              placementConstraints,
+              requiresCompatibilities,
+              cpu,
+              memory,
+              pidMode,
+              ipcMode,
+              proxyConfiguration,
+              inferenceAccelerators,
+              ephemeralStorage,
+              runtimePlatform,
+              enableFaultInjection
+            }
+            | with_entries(select(.value != null))
             | .containerDefinitions |= map(
                 if .name == $container
                 then .image = $image
