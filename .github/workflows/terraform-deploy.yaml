@@ -20,6 +20,8 @@ jobs:
       TF_VAR_image_tag: ${{ vars.TF_VAR_image_tag }}
       TF_VAR_email_noreply: ${{ vars.TF_VAR_email_noreply }}
       TF_VAR_jwt_secret: ${{ secrets.TF_VAR_jwt_secret }}
+      TF_VAR_aws_region: ${{ vars.AWS_REGION }}
+      TF_VAR_availability_zones: ${{ vars.AVAILABILITY_ZONES }}
 
     steps:
       - name: Checkout repository
