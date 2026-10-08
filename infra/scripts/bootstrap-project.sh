@@ -22,20 +22,23 @@ get_image_tag() {
   git -C "$REPO_ROOT" rev-parse HEAD
 }
 
-bootstrap_dev_environment() {
+initialise_dev_backend() {
   local state_bucket="$1"
   local aws_region="$2"
-  local image_tag="$3"
 
   info "Initialising dev environment..."
+
   terraform -chdir="$DEV_DIR" init \
     -reconfigure \
     -backend-config="bucket=$state_bucket" \
     -backend-config="region=$aws_region"
+}
 
-  ensure_fresh_dev_state
+apply_dev_environment() {
+  local image_tag="$1"
 
   info "Applying dev infrastructure..."
+
   terraform -chdir="$DEV_DIR" apply \
     -var="image_tag=$image_tag"
 }
@@ -131,7 +134,6 @@ main() {
 
   echo
   info "Bootstrapping initial application image..."
-  "$SCRIPT_DIR/bootstrap-image.sh"
 
   local state_bucket
   local aws_region
@@ -142,10 +144,16 @@ main() {
   image_tag="$(get_image_tag)"
 
   echo
-  bootstrap_dev_environment \
-    "$state_bucket" \
-    "$aws_region" \
-    "$image_tag"
+  initialise_dev_backend "$state_bucket" "$aws_region"
+
+  ensure_fresh_dev_state
+
+  echo
+  info "Bootstrapping initial application image..."
+  "$SCRIPT_DIR/bootstrap-image.sh"
+
+  echo
+  apply_dev_environment "$image_tag"
 
   load_ecs_service
 
