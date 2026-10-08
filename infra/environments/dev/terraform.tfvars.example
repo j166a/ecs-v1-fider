@@ -1,7 +1,6 @@
 aws_region      = "eu-west-2"
 environment     = "dev"
 vpc_cidr        = "10.0.0.0/22"
-jwt_secret      = "<generate-a-secure-jwt-secret>"
 domain_name     = "fider.labs.example.com"
 route53_zone_id = "ZXXXXXXXXXXXXX"
 image_tag       = "<git-commit-sha>"

@@ -9,12 +9,6 @@ variable "tags" {
   default     = {}
 }
 
-variable "ssm_parameter_arns" {
-  description = "ARNs of SSM paramters the ECS execution role may retrieve"
-  type        = list(string)
-  default     = []
-}
-
 variable "secret_arns" {
   description = "Secrets Manager ARNs accessible to the ECS execution role"
   type        = list(string)

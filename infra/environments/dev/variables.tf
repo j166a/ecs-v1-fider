@@ -19,12 +19,6 @@ variable "vpc_cidr" {
   type        = string
 }
 
-variable "jwt_secret" {
-  description = "JWT secret used by Fider"
-  type        = string
-  sensitive   = true
-}
-
 variable "domain_name" {
   description = "Application domain name"
   type        = string

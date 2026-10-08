@@ -47,10 +47,6 @@ module "iam" {
   name = local.name
   tags = local.common_tags
 
-  ssm_parameter_arns = [
-    module.ssm.jwt_secret_arn,
-  ]
-
   secret_arns = [
     module.rds.master_user_secret_arn,
     module.secrets.jwt_secret_arn,
