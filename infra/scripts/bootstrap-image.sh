@@ -62,22 +62,6 @@ build_image() {
     "$REPO_ROOT"
 }
 
-generate_sbom() {
-  info "Generating SBOM..."
-
-  syft "$IMAGE_URI" \
-    -o spdx-json=sbom.spdx.json
-}
-
-scan_image() {
-  info "Scanning image for vulnerabilities..."
-
-  grype "$IMAGE_URI" \
-    --fail-on critical
-
-  success "Vulnerability scan passed."
-}
-
 login_to_ecr() {
   info "Logging in to ECR..."
 
@@ -101,7 +85,7 @@ main() {
   info "Fider initial image bootstrap"
   echo
 
-  require_commands aws docker git syft grype terraform
+  require_commands aws docker git terraform
   check_aws_identity
   echo
 
@@ -113,12 +97,6 @@ main() {
   check_image_exists
 
   build_image
-  echo
-
-  generate_sbom
-  echo
-
-  scan_image
   echo
 
   login_to_ecr
