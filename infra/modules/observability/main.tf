@@ -195,7 +195,8 @@ resource "aws_cloudwatch_metric_alarm" "rds_connections_high" {
 }
 
 resource "aws_sns_topic" "alerts" {
-  name = "${var.name}-alerts"
+  name              = "${var.name}-alerts"
+  kms_master_key_id = "alias/aws/sns"
 
   tags = var.tags
 }
