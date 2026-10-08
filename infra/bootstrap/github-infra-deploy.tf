@@ -290,6 +290,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     actions = [
       "secretsmanager:CreateSecret",
       "secretsmanager:TagResource",
+      "secretsmanager:DescribeSecret",
     ]
 
     resources = ["*"]
