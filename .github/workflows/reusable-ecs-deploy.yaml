@@ -54,19 +54,24 @@ jobs:
           AWS_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
           echo "uri=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${REPOSITORY}:${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
 
-      - name: Fetch current task definition
+      - name: Fetch latest task definition
         env:
           SERVICE: ${{ inputs.service }}
           CLUSTER: ${{ inputs.cluster }}
         run: |
-          TASK_DEFINITION=$(aws ecs describe-services \
+          SERVICE_TASK_DEFINITION="$(aws ecs describe-services \
             --cluster "$CLUSTER" \
             --services "$SERVICE" \
             --query 'services[0].taskDefinition' \
-            --output text)
+            --output text)"
+
+          TASK_FAMILY="$(aws ecs describe-task-definition \
+            --task-definition "$SERVICE_TASK_DEFINITION" \
+            --query 'taskDefinition.family' \
+            --output text)"
 
           aws ecs describe-task-definition \
-            --task-definition "$TASK_DEFINITION" \
+            --task-definition "$TASK_FAMILY" \
             --query 'taskDefinition' \
             > task-definition.json
 
