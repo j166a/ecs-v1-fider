@@ -15,9 +15,9 @@ variable "ssm_parameter_arns" {
   default     = []
 }
 
-variable "rds_secret_arn" {
-  description = "ARN of the RDS-managed Secrets Manager secret"
-  type        = string
+variable "secret_arns" {
+  description = "Secrets Manager ARNs accessible to the ECS execution role"
+  type        = list(string)
 }
 
 variable "ses_from_address" {

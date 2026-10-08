@@ -149,9 +149,7 @@ data "aws_iam_policy_document" "ecs_execution_secrets" {
       "secretsmanager:GetSecretValue"
     ]
 
-    resources = [
-      var.rds_secret_arn
-    ]
+    resources = var.secret_arns
   }
 }
 

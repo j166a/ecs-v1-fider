@@ -51,7 +51,9 @@ module "iam" {
     module.ssm.jwt_secret_arn,
   ]
 
-  rds_secret_arn = module.rds.master_user_secret_arn
+  secret_arns = [
+    module.rds.master_user_secret_arn,
+  ]
 
   ses_from_address = var.email_noreply
 
