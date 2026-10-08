@@ -23,6 +23,7 @@ jobs:
     uses: ./.github/workflows/reusable-ecs-deploy.yaml
     with:
       aws_region: ${{ vars.AWS_REGION }}
+      health_url: ${{ vars.TF_VAR_BASE_URL }}/_health
       cluster: fider-dev-cluster
       service: fider-dev-service
       container_name: fider-dev

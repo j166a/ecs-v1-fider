@@ -6,6 +6,9 @@ on:
       aws_region:
         required: true
         type: string
+      health_url:
+        required: true
+        type: string
       cluster:
         required: true
         type: string
@@ -213,6 +216,8 @@ jobs:
             --services "$SERVICE"
 
       - name: Verify application health
+        env:
+          HEALTH_URL: ${{ inputs.health_url }}
         run: |
           curl --fail --silent --show-error \
-            https://fider.labs.imadahmed.uk/_health
+            "$HEALTH_URL"
