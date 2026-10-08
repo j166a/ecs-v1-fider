@@ -19,7 +19,7 @@ module "vpc" {
   tags = local.common_tags
 
   vpc_cidr           = var.vpc_cidr
-  availability_zones = ["eu-west-2a", "eu-west-2b"]
+  availability_zones = var.availability_zones
 }
 
 module "endpoints" {

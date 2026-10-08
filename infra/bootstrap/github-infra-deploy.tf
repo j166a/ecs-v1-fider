@@ -34,7 +34,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     ]
 
     resources = [
-      "arn:aws:acm:eu-west-2:${data.aws_caller_identity.current.account_id}:certificate/*",
+      "arn:aws:acm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:certificate/*",
     ]
   }
 
@@ -50,7 +50,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     ]
 
     resources = [
-      "arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/ecs/fider-dev:*",
+      "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:log-group:/ecs/fider-dev:*",
     ]
   }
 
@@ -64,7 +64,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     ]
 
     resources = [
-      "arn:aws:logs:eu-west-2:${data.aws_caller_identity.current.account_id}:log-group:/ecs/fider-dev",
+      "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:log-group:/ecs/fider-dev",
     ]
   }
 
@@ -305,7 +305,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     ]
 
     resources = [
-      "arn:aws:kms:eu-west-2:${data.aws_caller_identity.current.account_id}:key/*",
+      "arn:aws:kms:${var.aws_region}:${data.aws_caller_identity.current.account_id}:key/*",
     ]
   }
 
@@ -339,7 +339,7 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     ]
 
     resources = [
-      "arn:aws:ssm:eu-west-2:${data.aws_caller_identity.current.account_id}:parameter/fider/dev/jwt-secret",
+      "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/fider/dev/jwt-secret",
     ]
   }
 

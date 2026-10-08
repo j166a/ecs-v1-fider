@@ -2,41 +2,108 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/common.sh"
 
-cd "$SCRIPT_DIR/../environments/dev"
+DEV_DIR="$SCRIPT_DIR/../environments/dev"
 
-echo "Applying infrastructure with ECS service scaled to 0..."
+apply_infrastructure() {
+  info "Applying dev infrastructure..."
 
-terraform apply \
-  -auto-approve \
-  -var='ecs_desired_count=0'
+  terraform -chdir="$DEV_DIR" apply -auto-approve
 
-"$SCRIPT_DIR/ecs-migrate.sh"
+  success "Dev infrastructure applied."
+}
 
-echo "Starting ECS application service..."
+load_service_details() {
+  info "Reading ECS service configuration from Terraform..."
 
-terraform apply \
-  -auto-approve \
-  -var='ecs_desired_count=1'
+  ECS_CLUSTER="$(
+    terraform -chdir="$DEV_DIR" output -raw ecs_cluster_name
+  )"
 
-ECS_CLUSTER=$(terraform output -raw ecs_cluster_name)
-ECS_SERVICE=$(terraform output -raw ecs_service_name)
+  ECS_SERVICE="$(
+    terraform -chdir="$DEV_DIR" output -raw ecs_service_name
+  )"
 
-echo "Waiting for ECS service to become stable..."
+  BASE_URL="$(
+    terraform -chdir="$DEV_DIR" output -raw base_url
+  )"
 
-aws ecs wait services-stable \
-  --cluster "$ECS_CLUSTER" \
-  --services "$ECS_SERVICE"
+  HEALTH_URL="${BASE_URL%/}/_health"
 
-BASE_URL=$(terraform output -raw base_url)
-HEALTH_URL="${BASE_URL%/}/_health"
+  success "ECS service configuration loaded."
+}
 
-echo "Checking application health..."
+run_migration() {
+  info "Running database migration..."
 
-curl --fail --silent --show-error \
-  --max-time 10 \
-  "$HEALTH_URL"
+  "$SCRIPT_DIR/ecs-migrate.sh"
+}
 
-echo
-echo "Deployment completed successfully."
+start_service() {
+  info "Starting ECS application service..."
+
+  aws ecs update-service \
+    --cluster "$ECS_CLUSTER" \
+    --service "$ECS_SERVICE" \
+    --desired-count 1 \
+    >/dev/null
+
+  success "ECS service update requested."
+}
+
+wait_for_service() {
+  info "Waiting for ECS service to become stable..."
+
+  aws ecs wait services-stable \
+    --cluster "$ECS_CLUSTER" \
+    --services "$ECS_SERVICE"
+
+  success "ECS service is stable."
+}
+
+check_health() {
+  info "Checking application health..."
+
+  curl \
+    --fail \
+    --silent \
+    --show-error \
+    --max-time 10 \
+    "$HEALTH_URL"
+
+  echo
+  success "Application health check passed."
+}
+
+main() {
+  info "Fider dev deployment"
+  echo
+
+  require_commands aws terraform curl
+  check_aws_identity
+  echo
+
+  apply_infrastructure
+  echo
+
+  run_migration
+  echo
+
+  load_service_details
+  echo
+
+  start_service
+  echo
+
+  wait_for_service
+  echo
+
+  check_health
+  echo
+
+  success "Deployment completed successfully."
+}
+
+main "$@"

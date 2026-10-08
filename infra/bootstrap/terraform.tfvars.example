@@ -1,7 +1,7 @@
-state_bucket_name = "your-terraform-state-bucket"
-ecr_repository_name = "your-ecr-repository-name"
-
+state_bucket_name    = "your-terraform-state-bucket"
+ecr_repository_name  = "your-ecr-repository-name"
 github_owner         = "your-github-username-or-org"
 github_owner_id      = 123456789
 github_repository    = "your-repository-name"
 github_repository_id = 1234567890
+aws_region           = "eu-west-2"

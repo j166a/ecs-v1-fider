@@ -22,7 +22,7 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     uses: ./.github/workflows/reusable-ecs-deploy.yaml
     with:
-      aws_region: eu-west-2
+      aws_region: ${{ vars.AWS_REGION }}
       cluster: fider-dev-cluster
       service: fider-dev-service
       container_name: fider-dev
