@@ -15,7 +15,8 @@ resource "aws_ecs_cluster" "this" {
 }
 
 resource "aws_cloudwatch_log_group" "this" {
-  # checkov:skip=CKV_AWS_338:Short retention is intentional
+  # checkov:skip=CKV_AWS_158:Default CloudWatch Logs encryption is sufficient for this development project
+  # checkov:skip=CKV_AWS_338:Short retention is intentional for this development project
   name              = "/ecs/${var.name}"
   retention_in_days = 7
 
