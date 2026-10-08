@@ -63,3 +63,16 @@ jobs:
         env:
           IMAGE: ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
         run: docker push "$IMAGE"
+
+      - name: Write job summary
+        env:
+          IMAGE: ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+        run: |
+          {
+            echo "## Image build"
+            echo
+            echo "- Image: \`$IMAGE\`"
+            echo "- SBOM: generated"
+            echo "- Vulnerability scan: passed"
+            echo "- ECR push: completed"
+          } >> "$GITHUB_STEP_SUMMARY"

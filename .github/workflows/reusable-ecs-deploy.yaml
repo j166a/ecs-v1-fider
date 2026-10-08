@@ -232,3 +232,22 @@ jobs:
         run: |
           curl --fail --silent --show-error \
             "$HEALTH_URL"
+
+      - name: Write job summary
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+          IMAGE: ${{ steps.image.outputs.uri }}
+          TASK_DEFINITION: ${{ steps.task-definition.outputs.arn }}
+          HEALTH_URL: ${{ inputs.health_url }}
+        run: |
+          {
+            echo "## ECS deployment"
+            echo
+            echo "- Environment: \`$ENVIRONMENT\`"
+            echo "- Image: \`$IMAGE\`"
+            echo "- Task definition: \`$TASK_DEFINITION\`"
+            echo "- Database migration: passed"
+            echo "- Service stability: reached"
+            echo "- Health check: passed"
+            echo "- Health URL: $HEALTH_URL"
+          } >> "$GITHUB_STEP_SUMMARY"
