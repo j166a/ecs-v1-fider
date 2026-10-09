@@ -38,6 +38,23 @@ data "aws_iam_policy_document" "github_actions_deploy_infrastructure" {
     ]
   }
 
+  # CloudWatch Alarms
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "cloudwatch:DeleteAlarms",
+      "cloudwatch:PutMetricAlarm",
+      "cloudwatch:TagResource",
+      "cloudwatch:UntagResource",
+    ]
+
+    resources = [
+      "arn:aws:cloudwatch:${var.aws_region}:${data.aws_caller_identity.current.account_id}:alarm:fider-dev-*",
+    ]
+  }
+
   # CloudWatch Logs
 
   statement {
