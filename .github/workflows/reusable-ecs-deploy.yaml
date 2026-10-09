@@ -220,7 +220,8 @@ jobs:
           aws ecs update-service \
             --cluster "$CLUSTER" \
             --service "$SERVICE" \
-            --task-definition "$TASK_DEFINITION"
+            --task-definition "$TASK_DEFINITION" \
+            --desired-count 1
 
       - name: Wait for service stability
         env:
