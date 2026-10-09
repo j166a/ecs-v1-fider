@@ -12,6 +12,7 @@ resource "aws_db_subnet_group" "this" {
 
 resource "aws_db_instance" "this" {
   # checkov:skip=CKV2_AWS_30:Full PostgreSQL query logging is not enabled for this development project
+  # checkov:skip=CKV_AWS_118:Enhanced Monitoring is not required for this development environment
 
   identifier = "${var.name}-postgres"
 
