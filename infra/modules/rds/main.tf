@@ -37,6 +37,11 @@ resource "aws_db_instance" "this" {
   apply_immediately       = true
   copy_tags_to_snapshot   = true
 
+  enabled_cloudwatch_logs_exports = [
+    "postgresql",
+    "upgrade",
+  ]
+
   tags = merge(
     var.tags,
     {
