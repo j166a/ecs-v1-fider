@@ -14,6 +14,7 @@ resource "aws_db_instance" "this" {
   # checkov:skip=CKV2_AWS_30:Full PostgreSQL query logging is not enabled for this development project
   # checkov:skip=CKV_AWS_118:Enhanced Monitoring is not required for this development environment
   # checkov:skip=CKV_AWS_161:IAM database authentication is not used by the Fider application
+  # checkov:skip=CKV_AWS_293:Deletion protection is intentionally disabled for this disposable development environment
 
   identifier = "${var.name}-postgres"
 
