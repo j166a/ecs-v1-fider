@@ -5,7 +5,7 @@ on:
 
 jobs:
   destroy:
-    environment: dev
+    environment: dev-destroy
     runs-on: ubuntu-latest
 
     permissions:
