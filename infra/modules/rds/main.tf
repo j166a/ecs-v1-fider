@@ -35,6 +35,7 @@ resource "aws_db_instance" "this" {
   backup_retention_period = 1
   deletion_protection     = false
   apply_immediately       = true
+  copy_tags_to_snapshot   = true
 
   tags = merge(
     var.tags,
